@@ -1,0 +1,14 @@
+services:
+  zooid:
+    volumes:
+      - type: bind
+        source: ../zooid/zooid.conf
+        target: /etc/zooid.conf.d/main.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    env_file:
+      - path: ../livekit/.env
+        required: true
+    depends_on:
+      - livekit

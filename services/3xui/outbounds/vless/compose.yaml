@@ -1,0 +1,4 @@
+services:
+  3xui:
+    ports:
+      - "${XUI_OUTBOUND_VLESS_BIND:-0.0.0.0}:${XUI_OUTBOUND_VLESS_PORT}:${XUI_OUTBOUND_VLESS_PORT}"

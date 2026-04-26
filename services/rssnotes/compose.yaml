@@ -1,0 +1,13 @@
+# https://github.com/trinidz/rssnotes/blob/main/sample.docker-compose.yml
+services:
+  rssnotes:
+    image: ${GHCR_MIRROR:-ghcr.io/trinidz}/rssnotes:latest
+    volumes:
+      - "../../data/rssnotes/.env:/.env"
+      - "../../data/rssnotes/db:/app/db"
+      - "../../data/rssnotes/qrcodes:/app/web/assets/qrcodes"
+      - "../../data/rssnotes/logfile.log:/app/logfile.log"
+      - "../../data/rssnotes/seedrelays.json:/app/seedrelays.json:ro"
+    ports:
+      - "${RSSNOTES_PORT}:3334"
+    restart: unless-stopped

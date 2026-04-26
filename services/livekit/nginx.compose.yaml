@@ -1,0 +1,17 @@
+# override nginx container with extra conf and html root
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../livekit/nginx.http.conf
+        target: /etc/nginx/conf.d/domains/${LIVEKIT_DOMAIN}/livekit.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    #env_file:
+    #  - path: ../livekit/nginx.env
+    #    required: true
+    environment:
+      - LIVEKIT_DOMAIN
+      - LIVEKIT_PORT
+      - LIVEKIT_RTC_TCP_PORT

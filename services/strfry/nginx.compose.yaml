@@ -1,0 +1,33 @@
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../strfry/nginx.http.conf
+        target: /etc/nginx/conf.d/domains/${STRFRY_DOMAIN}/strfry.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../strfry/flotilla.indexer_relays.conf
+        target: /etc/flotilla/indexer_relays.d/strfry.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../strfry/flotilla.default_messaging_relays.conf
+        target: /etc/flotilla/default_messaging_relays.d/strfry.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../strfry/flotilla.default_relays.conf
+        target: /etc/flotilla/default_relays.d/strfry.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    #env_file:
+    #  - path: ../strfry/nginx.env
+    #    required: true
+    environment:
+      - STRFRY_DOMAIN
+      - STRFRY_PORT

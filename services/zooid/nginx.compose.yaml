@@ -1,0 +1,27 @@
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../zooid/nginx.http.conf
+        target: /etc/nginx/conf.d/domains/${ZOOID_DOMAIN}/zooid.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../zooid/flotilla.default_relays.conf
+        target: /etc/flotilla/default_relays.d/zooid.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../zooid/flotilla.default_blossom_servers.conf
+        target: /etc/flotilla/default_blossom_servers.d/zooid.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    #env_file:
+    #  - path: ../zooid/nginx.env
+    #    required: true
+    environment:
+      - ZOOID_DOMAIN
+      - ZOOID_PORT

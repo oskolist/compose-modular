@@ -1,0 +1,39 @@
+# override nginx container with extra conf and html root
+services:
+  nginx:
+    volumes:
+      - type: image
+        source: mattfly/obsidian:latest
+        target: ${OBSIDIANIRC_ROOT}.unpatched
+        image:
+          subpath: usr/share/nginx/html/
+      # this is also does not work because "${OBSIDIANIRC_ROOT}" is mounted as read-only and "${OBSIDIANIRC_ROOT}" and docker cannot create the "${OBSIDIANIRC_ROOT}/external" directory to mount tmpfs in it. as a workaround i did redirect "/server.json" to "/etc/obsidianirc/servers.json" in nginx.http.conf
+      #- type: tmpfs
+      #  target: ${OBSIDIANIRC_ROOT}/external
+      #  tmpfs:
+      #    size: 5M
+      #    #mode: 0777
+      - type: bind
+        source: ../obsidianirc/nginx.http.conf
+        target: /etc/nginx/conf.d/domains/${OBSIDIANIRC_DOMAIN}/obsidianirc.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../obsidianirc/nginx.entrypoint.sh
+        target: /docker-entrypoint.d/obsidianirc.sh
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../obsidianirc/nginx.envsubst.conf
+        target: /etc/envsubst.d/obsidianirc.conf
+        read_only: true
+        bind:
+          create_host_path: false
+    #env_file:
+    #  - path: ../obsidianirc/nginx.env
+    #    required: true
+    environment:
+      - OBSIDIANIRC_DOMAIN
+      - OBSIDIANIRC_ROOT

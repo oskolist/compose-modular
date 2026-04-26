@@ -1,0 +1,44 @@
+# https://github.com/schlagmichdoch/PairDrop/blob/master/docs/host-your-own.md
+# https://github.com/schlagmichdoch/PairDrop/blob/master/docker-compose-coturn.yml
+# https://github.com/schlagmichdoch/PairDrop/blob/master/docker-compose.yml
+services:
+  pairdrop:
+    #image: ${GHCR_MIRROR:-ghcr.io/schlagmichdoch}/pairdrop:latest # TODO: maybe test this?
+    #image: lscr.io/linuxserver/pairdrop:latest
+    image: linuxserver/pairdrop:latest
+    container_name: pairdrop
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ../pairdrop/rtc_config.json
+        target: /home/node/app/rtc_config.json
+        read_only: true
+        bind:
+          create_host_path: false
+    environment:
+      - PUID=1000                                  # UID to run the application as
+      - PGID=1000                                  # GID to run the application as
+      - RTC_CONFIG=/home/node/app/rtc_config.json  # Set to the path of a file that specifies the STUN/TURN servers.
+      - WS_FALLBACK=${PAIRDROP_WS_FALLBACK:-false} # Set to true to enable websocket fallback if the peer to peer WebRTC connection is not available to the client.
+      - RATE_LIMIT=${PAIRDROP_RATE_LIMIT:-false}   # Set to true to limit clients to 1000 requests per 5 min.
+      - DEBUG_MODE=${PAIRDROP_DEBUG_MODE:-false}   # Set to true to debug container and peer connections.
+      - TZ=Etc/UTC                                 # Time Zone
+      - PORT=${PAIRDROP_PORT:-3000}
+    ports:
+      - "${PAIRDROP_BIND:-127.0.0.1}:${PAIRDROP_PORT:-3000}:${PAIRDROP_PORT:-3000}" # Web UI. Change the port number before the last colon e.g. `127.0.0.1:9000:3000`
+    depends_on:
+      - turnserver
+  #turnserver:
+  #  image: "coturn/coturn"
+  #  container_name: coturn
+  #  restart: unless-stopped
+  #  volumes:
+  #    - ./turnserver.conf:/etc/coturn/turnserver.conf
+  #    - ./ssl/:/etc/coturn/ssl/
+  #  ports:
+  #    - "3478:3478"
+  #    - "3478:3478/udp"
+  #    - "5349:5349"
+  #    - "5349:5349/udp"
+  #    - "10000-20000:10000-20000/udp"
+  #  # see guide at docs/host-your-own.md#coturn-and-pairdrop-via-docker-compose

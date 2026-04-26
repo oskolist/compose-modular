@@ -1,0 +1,5 @@
+#listen       $HTTPS_PORT ssl;
+#listen       unix:/var/run/nginx_internal.sock proxy_protocol;
+#listen       unix:/dev/shm/nginx-http.sock proxy_protocol;
+listen       unix:/dev/shm/nginx-http.sock ssl proxy_protocol;
+http2 on;

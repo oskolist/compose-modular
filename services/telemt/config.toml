@@ -1,0 +1,58 @@
+# === General Settings ===
+[general]
+# ad_tag = "00000000000000000000000000000000"
+log_level = "${TELEMT_LOGLEVEL:-normal}"
+use_middle_proxy = false
+
+[general.modes]
+classic = false
+secure = false
+tls = true
+
+[general.links]
+public_host = "${TELEMT_PUBLIC_HOST}"
+public_port = ${TELEMT_PUBLIC_PORT}
+
+[server]
+port = ${TELEMT_PORT}
+proxy_protocol = ${TELEMT_PROXY_PROTOCOL}
+
+[[server.listeners]]
+ip = "0.0.0.0"
+
+[server.api]
+enabled = ${TELEMT_API_ENABLED:-true}
+listen = "0.0.0.0:${TELEMT_API_PORT:-9091}"
+whitelist = ["0.0.0.0/0"]
+read_only = ${TELEMT_API_READONLY:-true}
+auth_header = "${TELEMT_API_AUTHHEADER}"
+
+# === Anti-Censorship & Masking ===
+[censorship]
+tls_domain = "${TELEMT_TLS_DOMAIN}"
+tls_domains = ["${TELEMT_DOMAIN}"]
+mask_host = "nginx"
+mask_port = ${HTTPS_PORT}
+tls_front_dir = "/etc/telemt/tlsfront"
+tls_fetch_scope = "fetch"
+
+[access.users]
+# format: "username" = "32_hex_chars_secret"
+${TELEMT_USER_USERNAME} = "${TELEMT_USER_PASSWORD}"
+#${TELEMT_USER1_USERNAME:+${TELEMT_USER1_USERNAME} = "${TELEMT_USER1_PASSWORD}"}
+#${TELEMT_USER2_USERNAME:+${TELEMT_USER2_USERNAME} = "${TELEMT_USER2_PASSWORD}"}
+#${TELEMT_USER3_USERNAME:+${TELEMT_USER3_USERNAME} = "${TELEMT_USER3_PASSWORD}"}
+#${TELEMT_USER4_USERNAME:+${TELEMT_USER4_USERNAME} = "${TELEMT_USER4_PASSWORD}"}
+
+
+[[upstreams]]
+type = "direct"
+scopes = "fetch"
+
+[[upstreams]]
+enabled = ${TELEMT_UPSTREAM_ENABLED:-false}
+type = "${TELEMT_UPSTREAM_TYPE:-socks5}"
+address = "${TELEMT_UPSTREAM_ADDRESS}"
+username = "${TELEMT_UPSTREAM_USERNAME}"
+password = "${TELEMT_UPSTREAM_PASSWORD}"
+#scopes = "me, dc2"

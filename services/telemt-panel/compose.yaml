@@ -1,0 +1,36 @@
+# https://github.com/amirotin/telemt_panel/blob/main/docker-compose.yml
+services:
+  telemt-panel:
+    image: ${GHCR_MIRROR:-ghcr.io/amirotin}/telemt_panel:latest
+    #container_name: telemtpanel
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ../telemt-panel/config.toml
+        target: /etc/telemt-panel/config.toml.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: image
+        source: ${GHCR_MIRROR:-ghcr.io/yasn77}/envsubst-image:1.4.2
+        target: /usr/local/bin/go-envsubst
+        image:
+          subpath: usr/bin/envsubst
+    #network_mode: host
+    ports:
+      - "${TELEMTPANEL_BIND:-127.0.0.1}:${TELEMTPANEL_PORT:-8080}:8080"
+    environment:
+      - TELEMT_API_PORT=${TELEMT_API_PORT}
+      - TELEMT_API_AUTHHEADER=${TELEMT_API_AUTHHEADER}
+    env_file:
+      - path: ../telemt-panel/.env
+        required: true
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        set -e
+        go-envsubst -i "/etc/telemt-panel/config.toml.template" -o "/etc/telemt-panel/config.toml"
+        exec telemt-panel --config /etc/telemt-panel/config.toml
+    depends_on:
+      - telemt

@@ -1,0 +1,15 @@
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../microbin/nginx.http.conf
+        target: /etc/nginx/conf.d/domains/${MICROBIN_DOMAIN}/microbin.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    #env_file:
+    #  - path: ../microbin/nginx.env
+    #    required: true
+    environment:
+      - MICROBIN_DOMAIN
+      - MICROBIN_PORT

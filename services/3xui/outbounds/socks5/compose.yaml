@@ -1,0 +1,4 @@
+services:
+  3xui:
+    ports:
+      - "${XUI_OUTBOUND_SOCKS5_BIND:-127.0.0.1}:${XUI_OUTBOUND_SOCKS5_PORT}:${XUI_OUTBOUND_SOCKS5_PORT}"

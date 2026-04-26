@@ -1,0 +1,58 @@
+---
+include:
+  - path:
+    # WebServer
+    #- services/nginx/compose.yaml
+    # Deps
+    ## Livekit
+    #- services/livekit/compose.yaml
+    #- services/livekit/nginx.compose.yaml
+    ## Coturn
+    #- services/coturn/compose.yaml
+    # Filesharing
+    ## Uploadfile
+    #- services/dufs/compose.yaml
+    #- services/dufs/nginx.compose.yaml
+    ## Pastebin
+    #- services/microbin/compose.yaml
+    #- services/microbin/nginx.compose.yaml
+    ## Torrent tracker
+    #- services/torrust-tracker/compose.yaml
+    # Chatbox
+    #- services/hollama/compose.yaml
+    #- services/hollama/nginx.compose.yaml
+    # Nostr
+    ## Client
+    #- services/flotilla/nginx.compose.yaml # Static webapp
+    ## Relay
+    #- services/strfry/compose.yaml
+    #- services/strfry/nginx.compose.yaml
+    #- services/zooid/compose.yaml # incomplete
+    #- services/zooid/nginx.compose.yaml
+    # IRC
+    ## Client
+    #- services/obsidianirc/nginx.compose.yaml # Static webapp
+    ## Server
+    #- services/ergo/compose.yaml
+    #- services/ergo/nginx.compose.yaml
+    # IPFS
+    ## Kubo
+    #- services/kubo/compose.yaml
+    # Proxy
+    ## 3X-ui
+    #- services/3xui/compose.yaml
+    #- services/3xui/nginx.compose.yaml
+    #- services/3xui/outbounds/vless/compose.yaml
+    #- services/3xui/outbounds/socks5/compose.yaml
+    #- services/3xui/outbounds/nginx-vless/nginx.compose.yaml
+    #- services/3xui/outbounds/nginx-vless-forti/nginx.compose.yaml
+    ## Telemt
+    #- services/telemt/compose.yaml
+    #- services/telemt/nginx.compose.yaml
+    ## Telemt panel
+    #- services/telemt-panel/compose.yaml
+    #- services/telemt-panel/nginx.compose.yaml
+    ## Foticlient VPN
+    #- services/fortivpn-to-socks5/compose.yaml
+    ## SNI Spooing rust
+    #- services/sni-spoofing-rust/compose.yaml

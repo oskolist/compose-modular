@@ -1,0 +1,47 @@
+services:
+  zooid:
+    image: ${GHCR_MIRROR:-ghcr.io/coracle-social}/zooid:latest # Alpine-based
+    restart: unless-stopped
+    volumes:
+      - ../../data/zooid:/app:rw
+      - type: bind
+        source: ../zooid/zooid.conf
+        target: /etc/zooid.conf.d/main.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: image
+        source: ${GHCR_MIRROR:-ghcr.io/yasn77}/envsubst-image:1.4.2
+        target: /usr/local/bin/go-envsubst
+        image:
+          subpath: usr/bin/envsubst
+      - type: image
+        source: library/busybox:stable-musl
+        target: /usr/local/bin/busybox
+        image:
+          subpath: bin/busybox
+    ports:
+      - "${ZOOID_BIND:-127.0.0.1}:${ZOOID_PORT:-3334}:${ZOOID_PORT:-3334}"
+    environment:
+      #- API_HOST=${API_HOST}
+      #- API_WHITELIST=${API_WHITELIST}
+      - CONFIG=/tmp/config
+      - PORT=${ZOOID_PORT:-3334}
+    env_file:
+      - path: ../../.env.base
+        required: true
+      - path: ../zooid/.env
+        required: true
+    entrypoint: /usr/local/bin/busybox
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        #find /etc/zooid -type f -name "*.template" -exec sh -c 'echo [INFO] Patching {} using envsubst; /opt/envsubst < "{}" > "$$(echo "{}" | sed "s/.template$$//")"' \;
+        echo "# [INFO] Exporting all files in \"/etc/zooid.conf.d/*\" to \"/tmp/zooid.conf.template\""
+        busybox cat /etc/zooid.conf.d/* >/tmp/zooid.conf.template
+        busybox mkdir -p /tmp/config
+        go-envsubst -no-unset -no-empty -i "/tmp/zooid.conf.template" -o /tmp/config/zooid.conf
+        # TODO: remove environments after go-envsubst
+        exec /bin/zooid

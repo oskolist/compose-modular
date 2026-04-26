@@ -1,0 +1,16 @@
+# override nginx container with extra conf and html root
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../rssnotes/nginx.http.conf
+        target: /etc/nginx/conf.d/domains/${RSSNOTES_DOMAIN}/rssnotes.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    #env_file:
+    #  - path: ../rssnotes/nginx.env
+    #    required: true
+    environment:
+      - RSSNOTES_DOMAIN
+      - RSSNOTES_PORT

@@ -1,0 +1,31 @@
+services:
+  # https://github.com/hoytech/strfry/blob/master/sample-docker-compose.yaml
+  strfry:
+    image: ${GHCR_MIRROR:-ghcr.io/hoytech}/strfry:latest # Alpine-based
+    ports:
+      - ${STRFRY_PORT:-7777}:${STRFRY_PORT:-7777}
+    volumes:
+      - ../../data/strfry-db:/app/strfry-db
+      - type: bind
+        source: ../strfry/strfry.conf
+        target: /etc/strfry.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: image
+        source: ${GHCR_MIRROR:-ghcr.io/yasn77}/envsubst-image:1.4.2
+        target: /usr/local/bin/go-envsubst
+        image:
+          subpath: usr/bin/envsubst
+    env_file:
+      - path: ../../.env.base
+        required: true
+      - path: ../strfry/.env
+        required: true
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        #cd /app # no need because of `WORKDIR /app` in Dockerfile
+        go-envsubst -no-unset -no-empty -i "/etc/strfry.conf.template" -o ./strfry.conf # used relative path because strfry loads from ./strfry.conf. this way if Dockerfile `WORKDIR` is changed we don't have to change it
+        exec /app/strfry relay

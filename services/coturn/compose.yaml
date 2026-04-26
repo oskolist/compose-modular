@@ -1,0 +1,87 @@
+# https://github.com/coturn/coturn/blob/master/docker/coturn/README.md
+# https://github.com/coturn/coturn/blob/master/docker/docker-compose-all.yml
+# https://github.com/schlagmichdoch/PairDrop/blob/master/docs/host-your-own.md#coturn-and-pairdrop-via-docker-compose
+# https://github.com/schlagmichdoch/PairDrop/blob/master/docker-compose-coturn.yml
+# https://continuwuity.org/calls/turn.html
+# https://continuwuity.org/calls/livekit.html
+# https://element-hq.github.io/synapse/latest/turn-howto.html
+# https://element-hq.github.io/synapse/latest/setup/turn/coturn.html
+# https://matrix-construct.github.io/tuwunel/turn.html
+# https://techssh.com/self-hosting/set-up-a-coturn-turn-server-for-matrix-synapse-voice-call/
+
+services:
+  turnserver:
+    image: "coturn/coturn"
+    restart: unless-stopped
+    secrets: # TODO: check correct uid and gid
+      - source: ssl_certificate
+        target: fullchain.pem
+        uid: "101"
+        gid: "101"
+        mode: 0o444
+      - source: ssl_certificate_key
+        target: privkey.pem
+        uid: "101"
+        gid: "101"
+        mode: 0o440
+    volumes:
+      - type: bind
+        source: ../../data/ipmonitor/currentip.txt
+        target: /currentip.txt
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../coturn/turnserver.conf
+        target: /etc/coturn/turnserver.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: image
+        source: ${GHCR_MIRROR:-ghcr.io/yasn77}/envsubst-image:1.4.2
+        target: /usr/local/bin/go-envsubst
+        image:
+          subpath: usr/bin/envsubst
+      # We use busybox to allow the upstream image to be changed easily to alpine-based one (maybe in the future)
+      - type: image
+        source: library/busybox:stable-musl
+        target: /usr/local/bin/busybox
+        image:
+          subpath: bin/busybox
+      - type: tmpfs
+        target: /var/lib/coturn
+    network_mode: "host"
+    # Commented because this makes docker compose hang/freeze (maybe only in rootless mode?) because it want to portforward every port between COTURN_MIN_PORT and COTURN_MAX_PORT. so lets just use "network_mode: host"
+    #ports:
+    #  - "${COTURN_PORT:-3478}:${COTURN_PORT:-3478}"
+    #  - "${COTURN_PORT:-3478}:${COTURN_PORT:-3478}/udp"
+    #  # I commented because COTURN_PORT can be used for both SSL or raw if clients support that
+    #  #- "${COTURN_SSL_PORT:-5349}:${COTURN_SSL_PORT:-5349}"
+    #  #- "${COTURN_SSL_PORT:-5349}:${COTURN_SSL_PORT:-5349}/udp"
+    #  - "${COTURN_MIN_PORT:-49152}-${COTURN_MAX_PORT:-65535}:${COTURN_MIN_PORT:-49152}-${COTURN_MAX_PORT:-65535}/udp"
+    env_file:
+      - path: ../coturn/.env
+        required: true
+    user: root
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        #term_handler() {
+        #    echo "# [INFO] Received SIGTERM/SIGINT. Shutting down gracefully..."
+        #    killall coturn || true
+        #    exit 0
+        #}
+        #trap 'term_handler' SIGTERM SIGINT
+
+        export COTURN_EXTERNAL_IP="$$(cat /currentip.txt)"
+        echo "# [INFO] set COTURN_EXTERNAL_IP to \"$$COTURN_EXTERNAL_IP\""
+
+        echo "# [INFO] Patching /etc/coturn/turnserver.conf"
+        go-envsubst -no-unset -no-empty -i "/etc/coturn/turnserver.conf.template" -o "/etc/coturn/turnserver.conf"
+        exec busybox su -s /bin/bash nobody -c "set -ex; source /usr/local/bin/docker-entrypoint.sh --log-file=/tmp/stdout"
+secrets:
+  ssl_certificate:
+    environment: SSL_CERT
+  ssl_certificate_key:
+    environment: SSL_CERT_KEY

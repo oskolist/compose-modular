@@ -1,0 +1,14 @@
+# https://github.com/mycrl/turn-rs/blob/main/Dockerfile
+services:
+  turnserver:
+    image: ${GHCR_MIRROR:-ghcr.io/mycrl}/turn-server:latest
+    restart: unless-stopped
+    volumes:
+      - ./turnserver.conf:/etc/coturn/turnserver.conf
+      - ./ssl/:/etc/coturn/ssl/
+    ports:
+      - "3478:3478"
+      - "3478:3478/udp"
+      - "5349:5349"
+      - "5349:5349/udp"
+      - "10000-20000:10000-20000/udp"

@@ -1,0 +1,28 @@
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../telemt/nginx.stream.conf
+        target: /etc/nginx/stream-conf.d/telemt.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../telemt/nginx.stream-map-ssl_preread_server_name-upstream.conf
+        target: /etc/nginx/stream-conf.d/map-ssl_preread_server_name-upstream.d/telemt.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      #- type: bind
+      #  source: ../telemt/nginx.stream-map-ssl_preread_server_name-enable_proxy_protocol.conf
+      #  target: /etc/nginx/stream-conf.d/map-ssl_preread_server_name-enable_proxy_protocol.d/telemt.conf.template
+      #  read_only: true
+      #  bind:
+      #    create_host_path: false
+    #env_file:
+    #  - path: ../telemt/nginx.env
+    #    required: true
+    environment:
+      - TELEMT_PORT
+      - TELEMT_DOMAIN
+      - TELEMT_PROXY_PROTOCOL

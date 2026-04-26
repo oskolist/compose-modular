@@ -1,0 +1,41 @@
+# https://github.com/MHSanaei/3x-ui/blob/main/docker-compose.yml
+services:
+  3xui:
+    #image: docker.io/bigbugcc/3x-ui:latest
+    image: ${GHCR_MIRROR:-ghcr.io/mhsanaei}/3x-ui:latest
+    #container_name: 3xui
+    restart: unless-stopped
+    extra_hosts:
+      - "host.containers.internal:host-gateway"
+    ports:
+      - "${XUI_BIND:-127.0.0.1}:${XUI_PORT:-2053}:2053"
+      - "${XUI_SUB_BIND:-127.0.0.1}:${XUI_SUB_PORT:-2096}:2096"
+    volumes:
+      - ../../data/3xui/db/:/etc/x-ui/
+      - ../../data/3xui/cert/:/root/cert/
+      - ../../data/3xui/sockets/:/dev/shm/
+    environment:
+      - XUI_ENABLE_FAIL2BAN=${XUI_ENABLE_FAIL2BAN:-true}
+      - XUI_USERNAME=${XUI_USERNAME}
+      - XUI_PASSWORD=${XUI_PASSWORD}
+      - XUI_DEBUG=${XUI_DEBUG}
+      - XUI_PATH_PREFIX=${XUI_PATH_PREFIX}
+      - XUI_CHANGE_USERPASS=${XUI_CHANGE_USERPASS:-true}
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        set -e
+        # https://github.com/MHSanaei/3x-ui/blob/main/DockerEntrypoint.sh
+        [ $$XUI_ENABLE_FAIL2BAN == "true" ] && fail2ban-client -x start
+        if [ -n "$$XUI_USERNAME" ] && [ -n "$$XUI_PASSWORD" ] && [ "$$XUI_CHANGE_USERPASS" == "true" ]; then
+          echo "[DEBUG] doing /app/x-ui setting -username \"{XUI_USERNAME}\" -password \"{XUI_PASSWORD}\" -resetTwoFactor false"
+          /app/x-ui setting -username "$${XUI_USERNAME}" -password "$${XUI_PASSWORD}" -resetTwoFactor false
+        fi
+        if [ -n "$$XUI_PATH_PREFIX" ]; then
+          XUI_PATH_PREFIX="$${XUI_PATH_PREFIX#/}"
+          XUI_PATH_PREFIX="$${XUI_PATH_PREFIX%/}"
+          echo "[DEBUG] doing /app/x-ui setting -webBasePath \"$$XUI_PATH_PREFIX\""
+          /app/x-ui setting -webBasePath "$$XUI_PATH_PREFIX"
+        fi
+        exec /app/x-ui

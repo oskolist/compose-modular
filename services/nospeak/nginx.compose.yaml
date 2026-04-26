@@ -1,0 +1,16 @@
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../nospeak/nginx.http.conf
+        target: /etc/nginx/conf.d/domains/${DUFS_DOMAIN}/nospeak.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    #env_file:
+    #  - path: ../nospeak/nginx.env
+    #    required: true
+    environment:
+      - NOSPEAK_DOMAIN
+      - NOSPEAK_PATH_PREFIX
+      - NOSPEAK_PORT

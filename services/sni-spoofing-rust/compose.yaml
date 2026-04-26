@@ -1,0 +1,15 @@
+services:
+  sni-spoofing-rust:
+    image: ${GHCR_MIRROR:-ghcr.io/therealaleph}/sni-spoofing-rust:main
+    #container_name: sni-spoofing-rust
+    restart: unless-stopped
+    #network_mode: "service:fortivpn-to-socks5"
+    ports:
+      - "${SNISPOOFINGRUST_BIND:-127.0.0.1}:${SNISPOOFINGRUST_PORT:-1080}:${SNISPOOFINGRUST_PORT:-1080}"
+    environment:
+      - "VLESS_URI=${SNISPOOFINGRUST_VLESS_URL}"
+      - "FAKE_SNI=${SNISPOOFINGRUST_FAKE_SNI}"
+      - "PROXY_PORT=${SNISPOOFINGRUST_PORT:-1080}"
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN

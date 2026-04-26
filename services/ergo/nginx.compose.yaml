@@ -1,0 +1,24 @@
+# override nginx container with extra conf and html root
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../ergo/nginx.obsidianirc.location.conf
+        target: /etc/nginx/conf.d/obsidianirc.d/location.d/ergo.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../ergo/nginx.obsidianirc.server.json
+        target: /etc/obsidianirc/servers.d/ergo.json.template
+        read_only: true
+        bind:
+          create_host_path: false
+    #env_file:
+    #  - path: ../ergo/nginx.env
+    #    required: true
+    environment:
+      - ERGO_NETWORK_NAME
+      - ERGO_DESCRIPTION
+      - ERGO_DOMAIN
+      - ERGO_WS_PORT

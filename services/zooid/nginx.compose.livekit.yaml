@@ -1,0 +1,9 @@
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../zooid/nginx.http.livekit.conf
+        target: /etc/nginx/conf.d/domains/${LIVEKIT_DOMAIN}/zooid.conf.template
+        read_only: true
+        bind:
+          create_host_path: false

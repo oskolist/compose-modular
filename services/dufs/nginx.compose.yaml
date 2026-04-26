@@ -1,0 +1,16 @@
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../dufs/nginx.http.conf
+        target: /etc/nginx/conf.d/domains/${DUFS_DOMAIN}/dufs.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    #env_file:
+    #  - path: ../dufs/nginx.env
+    #    required: true
+    environment:
+      - DUFS_DOMAIN
+      - DUFS_PORT
+      - DUFS_PATH_PREFIX

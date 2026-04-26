@@ -1,0 +1,15 @@
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../forgejo/nginx.http.conf
+        target: /etc/nginx/conf.d/domains/${FORGEJO_DOMAIN}/forgejo.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    #env_file:
+    #  - path: ../forgejo/nginx.env
+    #    required: true
+    environment:
+      - FORGEJO_DOMAIN
+      - FORGEJO_PORT

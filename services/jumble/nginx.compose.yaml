@@ -1,0 +1,21 @@
+# https://github.com/CodyTseng/jumble/blob/master/docker-compose.yml
+services:
+  nginx:
+    volumes:
+      - type: image
+        source: ${GHCR_MIRROR:-ghcr.io/aleerezaa}/jumble:master
+        target: /srv/http/Jumble
+        image:
+          subpath: usr/share/nginx/html/
+      - type: bind
+        source: ../jumble/nginx.http.conf
+        target: /etc/nginx/conf.d/domains/${JUMBLE_DOMAIN}/jumble.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    #env_file:
+    #  - path: ../jumble/nginx.env
+    #    required: true
+    environment:
+      - JUMBLE_DOMAIN
+      - JUMBLE_PORT

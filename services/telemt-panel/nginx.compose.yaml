@@ -1,0 +1,16 @@
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../telemt-panel/nginx.http.conf
+        target: /etc/nginx/conf.d/domains/${TELEMTPANEL_DOMAIN}/telemt-panel.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    #env_file:
+    #  - path: ../telemt-panel/nginx.env
+    #    required: true
+    environment:
+      - TELEMTPANEL_DOMAIN
+      - TELEMTPANEL_PORT
+      - TELEMTPANEL_PATH_PREFIX

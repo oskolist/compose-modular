@@ -1,0 +1,29 @@
+services:
+  dufs:
+    image: docker.io/forgejoclone/forgejo:14-rootless
+    #image: codeberg.org/forgejo/forgejo:14-rootless
+    user: 1000:1000
+    volumes:
+      - ../../data/forgejo/forgejo:/var/lib/gitea
+      - ../../data/forgejo/conf:/etc/gitea
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+        bind:
+          create_host_path: false
+    ports:
+      - "${FORGEJO_PORT:-3000}:3000"
+      - "${FORGEJO_SSH_PORT:-2222}:2222"
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+    env_file:
+      - path: ../forgejo/.env
+        required: true
+    #environment:
+    #  - FORGEJO__database__DB_TYPE=${FORGEJO__database__DB_TYPE:-postgres}
+    #  - FORGEJO__database__HOST=${FORGEJO__database__HOST:-db:5432}
+    #  - FORGEJO__database__NAME=${FORGEJO__database__NAME:-forgejo}
+    #  - FORGEJO__database__USER=${FORGEJO__database__USER:-forgejo}
+    #  - FORGEJO__database__PASSWD=${FORGEJO__database__PASSWD:-forgejo}

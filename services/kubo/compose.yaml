@@ -1,0 +1,31 @@
+# https://github.com/ipfs/kubo/blob/master/docs/environment-variables.md
+# https://github.com/ipfs/kubo/blob/master/docs/config.md
+services:
+  kubo:
+    #image: ipfs/kubo:release
+    image: ipfs/kubo:master-latest
+    #container_name: kubo
+    restart: unless-stopped
+    ports:
+      - "${KUBO_BIND:-0.0.0.0}:${KUBO_PORT:-4001}:4001" # IPFS Swarm Port
+      - "${KUBO_BIND:-0.0.0.0}:${KUBO_PORT:-4001}:4001/udp" # IPFS Swarm Port. TODO: i think this is really not neccesary as above will forward udp as well
+      - "${KUBO_API_BIND:-127.0.0.1}:${KUBO_API_PORT:-5001}:5001" # IPFS API Port
+      - "${KUBO_GATEWAY_BIND:-127.0.0.1}:${KUBO_GATEWAY_PORT:-8080}:8080" # IPFS Gateway Port
+    env_file:
+      ../kubo/.env
+    environment:
+      - GOMAXPROCS=4
+      - GOMEMLIMIT=2000MiB
+      - GOLOG_LOG_LEVEL=error,provider=debug,dht/provider=debug
+      - IPFS_PATH=/data/ipfs
+      - IPFS_TELEMETRY=off
+      - IPFS_PROFILE=server
+    volumes:
+      - ../../data/kubo/export:/export # to allow easy file sharing to IPFS using move/copy any file to "../../data/ipfs/export"
+      - ../../data/kubo:/data/ipfs
+      - type: bind
+        source: ../kubo/container-startup.sh
+        target: /container-init.d/001-container-startup.sh
+        read_only: true
+        bind:
+          create_host_path: false

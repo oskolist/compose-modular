@@ -1,0 +1,17 @@
+services:
+  nginx:
+    volumes:
+      - ../../data/3xui/sockets/:/mnt/3xui/dev/shm/
+      - type: bind
+        source: ../3xui/nginx.http.conf
+        target: /etc/nginx/conf.d/domains/${XUI_DOMAIN}/3xui.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    #env_file:
+    #  - path: ../3xui/nginx.env
+    #    required: true
+    environment:
+      - XUI_PORT
+      - XUI_SUB_PORT
+      - XUI_PATH_PREFIX

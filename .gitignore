@@ -1,0 +1,10 @@
+/secrets/
+/data/
+/.env.base
+/compose.yaml
+*.env
+*.secret
+*.secret.*
+*.bak
+*.orig
+#orig/

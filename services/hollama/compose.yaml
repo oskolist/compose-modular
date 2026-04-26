@@ -1,0 +1,10 @@
+services:
+  hollama:
+    # or dockerhub mirror -> docker.io/ssakm/hollama
+    image: ${GHCR_MIRROR:-ghcr.io/fmaclen}/hollama:latest
+    #container_name: hollama
+    restart: unless-stopped
+    ports:
+      - "${HOLLAMA_BIND:-127.0.0.1}:${HOLLAMA_PORT:-4173}:4173"
+    environment:
+      - VITE_ALLOWED_HOSTS=${HOLLAMA_DOMAIN}

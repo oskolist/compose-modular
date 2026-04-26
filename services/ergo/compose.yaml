@@ -1,0 +1,84 @@
+# https://github.com/ergochat/ergo/blob/master/distrib/docker/docker-compose.yml
+# https://github.com/ergochat/ergo/blob/master/distrib/docker/run.sh
+# https://github.com/ergochat/ergo/tree/master/distrib/docker
+# https://github.com/ergochat/ergo/blob/master/Dockerfile
+#
+# for updating `default.yaml` do:
+# - docker create --name temp ghcr.io/ergochat/ergo:stable
+# - docker cp temp:/ircd-bin/default.yaml ./default.yaml
+# - docker rm temp
+# - yq eval -i '... comments=""' default.yaml
+# then edit "default.yaml" and use variable interpolation for envsubst
+services:
+  ergo:
+    init: true
+    image: ${GHCR_MIRROR:-ghcr.io/ergochat}/ergo:stable
+    ports:
+      #- "${ERGO_BIND:-127.0.0.1}${ERGO_PORT:-6667}:${ERGO_PORT:-6667}/tcp"
+      - "${ERGO_SSL_BIND:-0.0.0.0}:${ERGO_SSL_PORT:-6697}:${ERGO_SSL_PORT:-6697}/tcp"
+      - "${ERGO_WS_BIND:-127.0.0.1}:${ERGO_WS_PORT:-8097}:${ERGO_WS_PORT:-8097}/tcp"
+    secrets:
+      - source: ssl_certificate
+        target: fullchain.pem
+        uid: "101"
+        gid: "101"
+        mode: 0o444
+      - source: ssl_certificate_key
+        target: privkey.pem
+        uid: "101"
+        gid: "101"
+        mode: 0o440
+    volumes:
+      - ../../data/ergo:/ircd:rw
+      - type: bind
+        source: ../ergo/ergo.yaml
+        target: /etc/ergo.yaml.template
+        bind:
+          create_host_path: false
+      - type: image
+        source: ${GHCR_MIRROR:-ghcr.io/yasn77}/envsubst-image:1.4.2
+        target: /usr/local/bin/go-envsubst
+        image:
+          subpath: usr/bin/envsubst
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        set -e
+        for FILE in "privkey.pem" "fullchain.pem"; do
+          if [ ! -e "/ircd/$$FILE" ]; then
+            if [ -e "/run/secrets/$$FILE" ]; then
+              ln -sf /run/secrets/$$FILE /ircd/$$FILE
+            else
+              echo "# [ERROR] /run/secrets/$$FILE not found"
+              exit 1
+            fi
+          else
+            echo "# [DEBUG] using preexisting \"/ircd/$$FILE\""
+          fi
+        done
+        if [ ! -e "/ircd/ircd.yaml" ]; then
+          echo "# [INFO] Patching /etc/ergo.yaml.template"
+          go-envsubst -i "/etc/ergo.yaml.template" -o /ircd/ircd.yaml
+        else
+          echo '# [INFO] Using pre-existed "/ircd/ircd.yaml"(this means if you did changed' ./services/ergo/{ergo.yaml, or .env} 'recently the changes will not apply!)'
+        fi
+        # TODO, unset "ERGO_*" variables here.
+        exec /ircd-bin/ergo run
+    env_file:
+      - path: ../ergo/.env
+        required: true
+    deploy:
+      placement:
+        constraints:
+          - "node.role == manager"
+      restart_policy:
+        condition: on-failure
+      replicas: 1
+
+secrets:
+  # note: podman-compose(even main branch in 2026-03-30) does not support it. throws "ValueError: ERROR: Secret "ssl_certificate" uses environment source, which is not supported for runtime secrets in podman-compose"
+  ssl_certificate:
+    environment: SSL_CERT
+  ssl_certificate_key:
+    environment: SSL_CERT_KEY

@@ -1,0 +1,14 @@
+# https://github.com/psic4t/nospeak/blob/master/Dockerfile
+services:
+  nospeak:
+    image: ${GHCR_MIRROR:-ghcr.io/psic4t}/nospeak
+    environment:
+      NOSPEAK_DISCOVERY_RELAYS: "wss://nostr.data.haus,wss://relay.damus.io,wss://nos.lol,wss://relay.primal.net,wss://purplepag.es,wss://user.kindpag.es,wss://profiles.nostr1.com,wss://directory.yabu.me"
+      NOSPEAK_DEFAULT_MESSAGING_RELAYS: "wss://nostr.data.haus,wss://nos.lol,wss://relay.damus.io"
+      NOSPEAK_SEARCH_RELAY: "wss://relay.nostr.band"
+      NOSPEAK_BLASTER_RELAY: "wss://sendit.nosflare.com"
+      NOSPEAK_DEFAULT_BLOSSOM_SERVERS: "https://blossom.data.haus,https://blossom.primal.net"
+      NOSPEAK_WEB_APP_BASE_URL: "https://nospeak.chat"
+      PORT: ${NOSPEAK_PORT:-3000}
+    ports:
+      - "${NOSPEAK_BIND:-127.0.0.1}:${NOSPEAK_PORT}:${NOSPEAK_PORT:-3000}"

@@ -1,0 +1,53 @@
+services:
+  ipmonitor:
+    image: alpine
+    entrypoint: /bin/sh
+    volumes:
+        - type: bind
+          source: ../../data/ipmonitor
+          target: /data
+          read_only: false
+          bind:
+            create_host_path: true
+    environment:
+      - IPMONITOR_URL=${IPMONITOR_URL}
+      - IPMONITOR_INTERVAL=${IPMONITOR_INTERVAL:-60} # seconds
+    command:
+      - -c
+      - |
+        set -e
+        FILE_PATH="/data/currentip.txt"
+        update_ip() {
+          echo "# [DEBUG] update_ip(): started"
+          #NEW_IP=$$(curl -s --connect-timeout 5 --max-time 10 "$$IPMONITOR_URL")
+          NEW_IP=$$(wget -q -O- "$$IPMONITOR_URL")
+          if [ -n "$$NEW_IP" ]; then
+            if [ "$$(cat "$$FILE_PATH")" = "$$NEW_IP" ]; then
+              echo "# [INFO] current ip is equal to last ip"
+            else
+              echo "# [INFO] updating last ip to: $$NEW_IP"
+              echo "$$NEW_IP" > "$$FILE_PATH"
+            fi
+          else
+            echo "# [WARNING] Failed to fetch IP address"
+          fi
+        }
+        term_handler() {
+            echo "# [INFO] Received SIGTERM/SIGINT. Shutting down gracefully..."
+            killall sleep || true
+            exit 0
+        }
+        trap 'term_handler' SIGTERM SIGINT
+        while true; do
+            # Run sleep in background and wait on its PID.
+            # This pattern allows the 'wait' command to be interrupted by signals 
+            # much more reliably than a foreground 'sleep' in some shell environments.
+            update_ip
+            sleep "$$IPMONITOR_INTERVAL" &
+            wait $$!
+            # If wait was interrupted by a signal, exit the loop
+            if [ $$? -ne 0 ]; then
+                break
+            fi
+        done
+        echo "# [DEBUG] Script exited."

@@ -1,0 +1,7 @@
+{
+  "name": "${ERGO_NETWORK_NAME}",
+  "description": "${ERGO_DESCRIPTION}",
+  "wss": "wss://${ERGO_DOMAIN}:${HTTPS_PORT}",
+  "ircs": "ircs://${ERGO_DOMAIN}:${ERGO_SSL_PORT}",
+  "obsidian": false
+}

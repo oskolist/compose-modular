@@ -1,0 +1,24 @@
+services:
+  sslrequire:
+    secrets:
+      - source: ssl_certificate
+        target: fullchain.pem
+        uid: "101"
+        gid: "101"
+        mode: 0o444
+      - source: ssl_certificate_key
+        target: privkey.pem
+        uid: "101"
+        gid: "101"
+        mode: 0o440
+
+secrets:
+  # note: podman-compose(even main branch in 2026-03-30) does not support it. throws "ValueError: ERROR: Secret "ssl_certificate" uses environment source, which is not supported for runtime secrets in podman-compose"
+  ssl_certificate:
+    environment: SSL_CERT
+  ssl_certificate_key:
+    environment: SSL_CERT_KEY
+  #ssl_certificate:
+  #  file: ./secrets/fullchain.pem
+  #ssl_certificate_key:
+  #  file: ./secrets/privkey.pem

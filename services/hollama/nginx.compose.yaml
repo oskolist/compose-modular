@@ -1,0 +1,15 @@
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../hollama/nginx.http.conf
+        target: /etc/nginx/conf.d/hollama.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    #env_file:
+    #  - path: ../hollama/nginx.env
+    #    required: true
+    environment:
+      - HOLLAMA_DOMAIN
+      - HOLLAMA_PORT

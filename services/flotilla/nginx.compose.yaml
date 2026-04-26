@@ -1,0 +1,38 @@
+# override nginx container with extra conf and html root
+services:
+  nginx:
+    volumes:
+      - type: image
+        source: ${GHCR_MIRROR:-ghcr.io/coracle-social}/flotilla:latest
+        target: ${FLOTILLA_ROOT}.unpatched
+        image:
+          subpath: app/build/
+      - type: tmpfs
+        target: ${FLOTILLA_ROOT}
+        tmpfs:
+          size: 50M
+          mode: 0777
+      - type: bind
+        source: ../flotilla/nginx.http.conf
+        target: /etc/nginx/conf.d/domains/${FLOTILLA_DOMAIN}/flotilla.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../flotilla/nginx.entrypoint.sh
+        target: /docker-entrypoint.d/flotilla.sh
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../flotilla/nginx.envsubst.conf
+        target: /etc/envsubst.d/flotilla.conf
+        read_only: true
+        bind:
+          create_host_path: false
+    #env_file:
+    #  - path: ../flotilla/nginx.env
+    #    required: true
+    environment:
+      - FLOTILLA_DOMAIN
+      - FLOTILLA_ROOT

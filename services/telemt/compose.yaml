@@ -1,0 +1,57 @@
+services:
+  telemt:
+    image: ${GHCR_MIRROR:-ghcr.io/telemt}/telemt:latest
+    ports:
+      - "${TELEMT_BIND:-127.0.0.1}:${TELEMT_PORT:-8443}:${TELEMT_PORT:-8443}"
+      - "${TELEMT_API_BIND:-127.0.0.1}:${TELEMT_API_PORT:-9091}:${TELEMT_API_PORT:-9091}"
+    volumes:
+      #- ../../data/telemt/cache:/app/cache
+      - ../../data/telemt:/etc/telemt
+      - type: bind
+        source: ../telemt/config.toml
+        target: /etc/telemt.toml.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: image
+        source: library/busybox:stable-musl
+        target: /bin/busybox
+        image:
+          subpath: bin/busybox
+      - type: image
+        source: ${GHCR_MIRROR:-ghcr.io/yasn77}/envsubst-image:1.4.2
+        target: /usr/local/bin/go-envsubst
+        image:
+          subpath: usr/bin/envsubst
+    env_file:
+      - path: ../../.env.base
+        required: false
+      - path: ../telemt/.env
+        required: true
+    user: root
+    entrypoint: /bin/busybox
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        busybox ln -sf /bin/busybox /bin/sh
+        #export NGINX_IP="$$(busybox nslookup -type=a nginx | busybox grep "Address" | busybox tail -1 | busybox awk '{print $$NF}')"
+        if [ ! -f "/etc/telemt/telemt.toml" ]; then
+          echo "# [INFO] Patching /etc/telemt/telemt.toml..."
+          go-envsubst -i "/etc/telemt.toml.template" -o "/etc/telemt/telemt.toml"
+          busybox chown nonroot /etc/telemt/telemt.toml
+          busybox chmod 660 /etc/telemt/telemt.toml # telemt-panel needs config to be read-write
+        else
+          echo "# [INFO] /etc/telemt/telemt.toml already exists, using it instead of overwriting...(this means if you changed ./serviecs/telemt/config.toml it will not effect. instead change ./data/telemt/telemt.toml)"
+          busybox chown nonroot /etc/telemt/telemt.toml
+          busybox chmod 660 /etc/telemt/telemt.toml # telemt-panel needs config to be read-write
+        fi
+        #sleep 3
+        if [ "$$TELEMT_WAIT_FOR_NGINX" == "true" ]; then
+          until busybox nc -z nginx $HTTPS_PORT 2>/dev/null; do
+            echo "Waiting for nginx at nginx:$HTTPS_PORT..."
+            sleep 1
+          done
+        fi
+        exec busybox su -s /bin/sh - nonroot -c "/app/telemt /etc/telemt/telemt.toml"
