@@ -1,20 +1,32 @@
 # https://github.com/schlagmichdoch/PairDrop/blob/master/docs/host-your-own.md
 # https://github.com/schlagmichdoch/PairDrop/blob/master/docker-compose-coturn.yml
 # https://github.com/schlagmichdoch/PairDrop/blob/master/docker-compose.yml
+# https://github.com/linuxserver/docker-pairdrop
+# https://github.com/SnapDrop/snapdrop/blob/master/docker/nginx/default.conf
 services:
   pairdrop:
-    #image: ${GHCR_MIRROR:-ghcr.io/schlagmichdoch}/pairdrop:latest # TODO: maybe test this?
-    #image: lscr.io/linuxserver/pairdrop:latest
-    image: linuxserver/pairdrop:latest
+    #image: linuxserver/pairdrop:latest # alpine-based image
+    image: ${GHCR_MIRROR:-ghcr.io/schlagmichdoch}/pairdrop:latest # alpine-based image
     container_name: pairdrop
     restart: unless-stopped
     volumes:
+      #- type: bind
+      #  source: ../pairdrop/rtc_config.json
+      #  target: /home/node/app/rtc_config.json
+      #  read_only: true
+      #  bind:
+      #    create_host_path: false
       - type: bind
-        source: ../pairdrop/rtc_config.json
-        target: /home/node/app/rtc_config.json
+        source: ../pairdrop/ice_servers.d/
+        target: /etc/pairdrop/ice_servers.d
         read_only: true
         bind:
           create_host_path: false
+      - type: image
+        source: ${GHCR_MIRROR:-ghcr.io/jqlang}/jq:latest
+        target: /usr/local/bin/jq
+        image:
+          subpath: jq
     environment:
       - PUID=1000                                  # UID to run the application as
       - PGID=1000                                  # GID to run the application as
@@ -26,8 +38,23 @@ services:
       - PORT=${PAIRDROP_PORT:-3000}
     ports:
       - "${PAIRDROP_BIND:-127.0.0.1}:${PAIRDROP_PORT:-3000}:${PAIRDROP_PORT:-3000}" # Web UI. Change the port number before the last colon e.g. `127.0.0.1:9000:3000`
-    depends_on:
-      - turnserver
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        set -euo pipefail
+        echo "# [INFO] Collecting Pairdrop config files to \"/etc/pairdrop/config.json\""
+        echo "# [DEBUG] Content of \"/etc/pairdrop/config.json\":"
+        echo '{"sdpSemantics":"unified-plan"}' |
+          jq --slurpfile servers <(
+            # Collect all *.json files and merge them as an array under "iceServers"
+            find "/etc/pairdrop/ice_servers.d" -maxdepth 1 -type f -name '*.json' -print0 |
+              sort -z |
+              xargs -0 jq -s '.'
+          ) '.iceServers = $$servers[0]' | tee /home/node/app/rtc_config.json
+        exec npm start
+    #depends_on:
+    #  - turnserver
   #turnserver:
   #  image: "coturn/coturn"
   #  container_name: coturn

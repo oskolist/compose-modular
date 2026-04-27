@@ -16,6 +16,9 @@ include:
     ## Pastebin
     #- services/microbin/compose.yaml
     #- services/microbin/nginx.compose.yaml
+    ## Pairdrop
+    #- services/pairdrop/compose.yaml
+    #- services/pairdrop/nginx.compose.yaml
     ## Torrent tracker
     #- services/torrust-tracker/compose.yaml
     # Chatbox
