@@ -1,21 +1,21 @@
 # https://github.com/torrust/torrust-tracker/blob/develop/compose.yaml
+# https://docs.rs/torrust-tracker/
+# https://docs.rs/torrust-tracker-configuration/latest/torrust_tracker_configuration/
+# https://docs.rs/torrust-tracker-configuration/latest/torrust_tracker_configuration/v2_0_0/index.html#tsl-support
+# https://github.com/torrust/torrust-website
+# https://github.com/torrust/torrust-tracker/blob/develop/docs/containers.md
 name: torrust
 services:
   tracker:
-    image: torrust-tracker:release
+    image: torrust/tracker:develop
     tty: true
-    environment:
-      - TORRUST_TRACKER_CONFIG_OVERRIDE_CORE__DATABASE__DRIVER=${TORRUST_TRACKER_CONFIG_OVERRIDE_CORE__DATABASE__DRIVER:-mysql}
-      - TORRUST_TRACKER_CONFIG_OVERRIDE_HTTP_API__ACCESS_TOKENS__ADMIN=${TORRUST_TRACKER_CONFIG_OVERRIDE_HTTP_API__ACCESS_TOKENS__ADMIN:-MyAccessToken}
     ports:
-      - 6969:6969/udp
-      - 7070:7070
-      - 1212:1212
+      - "${TORRUST_TRACKER_UDPTRACKER_BIND}:${TORRUST_TRACKER_UDPTRACKER_BIND:-6969}:${TORRUST_TRACKER_UDPTRACKER_BIND:-6969}/udp"
+      - "${TORRUST_TRACKER_HTTPTRACKER_BIND:-127.0.0.1}:${TORRUST_TRACKER_HTTPTRACKER_PORT:-7070}:${TORRUST_TRACKER_HTTPTRACKER_PORT:-7070}"
+      - "${TORRUST_TRACKER_API_BIND:-127.0.0.1}:${TORRUST_TRACKER_API_PORT:-1212}:${TORRUST_TRACKER_API_PORT:-1212}"
     volumes:
-      - ./storage/tracker/lib:/var/lib/torrust/tracker:Z
-      - ./storage/tracker/log:/var/log/torrust/tracker:Z
-      - ./storage/tracker/etc:/etc/torrust/tracker:Z
-    depends_on:
-      - mysql
-volumes:
-  mysql_data: {}
+      - ../../data/torrust-tracker/lib:/var/lib/torrust/tracker:Z
+      - ../../data/torrust-tracker/log:/var/log/torrust/tracker:Z
+      - ../../data/torrust-tracker/etc:/etc/torrust/tracker:Z
+    environment:
+      - TORRUST_TRACKER_CONFIG_OVERRIDE_HTTP_API__ACCESS_TOKENS__ADMIN=${TORRUST_TRACKER_CONFIG_OVERRIDE_HTTP_API__ACCESS_TOKENS__ADMIN:-${TORRUST_TRACKER_API_ACCESSTOKEN}}
