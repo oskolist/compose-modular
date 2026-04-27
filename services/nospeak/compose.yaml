@@ -1,7 +1,7 @@
 # https://github.com/psic4t/nospeak/blob/master/Dockerfile
 services:
   nospeak:
-    image: ${GHCR_MIRROR:-ghcr.io/psic4t}/nospeak
+    image: ${GHCR_MIRROR:-ghcr.io/psic4t}/nospeak:latest
     environment:
       NOSPEAK_DISCOVERY_RELAYS: "wss://nostr.data.haus,wss://relay.damus.io,wss://nos.lol,wss://relay.primal.net,wss://purplepag.es,wss://user.kindpag.es,wss://profiles.nostr1.com,wss://directory.yabu.me"
       NOSPEAK_DEFAULT_MESSAGING_RELAYS: "wss://nostr.data.haus,wss://nos.lol,wss://relay.damus.io"

@@ -24,10 +24,12 @@ include:
     # Nostr
     ## Client
     #- services/flotilla/nginx.compose.yaml # Static webapp
+    #- services/nospeak/compose.yaml
+    #- services/nospeak/nginx.compose.yaml
     ## Relay
     #- services/strfry/compose.yaml
     #- services/strfry/nginx.compose.yaml
-    #- services/zooid/compose.yaml # incomplete
+    #- services/zooid/compose.yaml
     #- services/zooid/nginx.compose.yaml
     # IRC
     ## Client

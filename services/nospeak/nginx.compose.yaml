@@ -3,7 +3,7 @@ services:
     volumes:
       - type: bind
         source: ../nospeak/nginx.http.conf
-        target: /etc/nginx/conf.d/domains/${DUFS_DOMAIN}/nospeak.conf.template
+        target: /etc/nginx/conf.d/domains/${NOSPEAK_DOMAIN}/nospeak.conf.template
         read_only: true
         bind:
           create_host_path: false
