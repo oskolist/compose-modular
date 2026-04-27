@@ -3,13 +3,13 @@ services:
     volumes:
       - type: bind
         source: ../hollama/nginx.http.conf
-        target: /etc/nginx/conf.d/hollama.conf.template
+        target: /etc/nginx/conf.d/domains/${HOLLAMA_DOMAIN}/hollama.conf.template
         read_only: true
         bind:
           create_host_path: false
     #env_file:
     #  - path: ../hollama/nginx.env
     #    required: true
-    environment:
-      - HOLLAMA_DOMAIN
-      - HOLLAMA_PORT
+    # Commented because its not necessary(because port is hardcoded in hollama and cannot be changed):
+    #environment:
+    #  - HOLLAMA_PORT

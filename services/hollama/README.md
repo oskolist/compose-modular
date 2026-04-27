@@ -1,5 +1,5 @@
 # Intro
-a web frontend to OpenAI compatiable api
+[hollama](https://github.com/fmaclen/hollama) a web frontend for OpenAI compatiable api
 
 # Status
-not tested
+seems ok but needs more testing
