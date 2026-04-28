@@ -7,7 +7,7 @@ services:
   pairdrop:
     #image: linuxserver/pairdrop:latest # alpine-based image
     image: ${GHCR_MIRROR:-ghcr.io/schlagmichdoch}/pairdrop:latest # alpine-based image
-    container_name: pairdrop
+    #container_name: pairdrop
     restart: unless-stopped
     volumes:
       #- type: bind
