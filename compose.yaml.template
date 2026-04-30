@@ -64,6 +64,10 @@ include:
     #- services/fortivpn-to-socks5/compose.yaml
     ## SNI Spooing rust
     #- services/sni-spoofing-rust/compose.yaml
+    # Git Server
+    ## Forgejo
+    - services/forgejo/compose.yaml
+    - services/forgejo/nginx.compose.yaml
     # Tools
     ## VSCode Web standalone version
     #- services/vscode-web-standalone/nginx.compose.yaml # Static webapp
