@@ -29,5 +29,4 @@ services:
     #  - path: ../strfry/nginx.env
     #    required: true
     environment:
-      - STRFRY_DOMAIN
-      - STRFRY_PORT
+      - STRFRY_PORT=${STRFRY_PORT:-7777}
