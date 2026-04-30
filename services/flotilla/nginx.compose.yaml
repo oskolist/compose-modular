@@ -4,11 +4,11 @@ services:
     volumes:
       - type: image
         source: ${GHCR_MIRROR:-ghcr.io/coracle-social}/flotilla:latest
-        target: ${FLOTILLA_ROOT}.unpatched
+        target: ${FLOTILLA_ROOT:-/srv/http/flotilla}.unpatched
         image:
           subpath: app/build/
       - type: tmpfs
-        target: ${FLOTILLA_ROOT}
+        target: ${FLOTILLA_ROOT:-/srv/http/flotilla}
         tmpfs:
           size: 50M
           mode: 0777
@@ -34,5 +34,4 @@ services:
     #  - path: ../flotilla/nginx.env
     #    required: true
     environment:
-      - FLOTILLA_DOMAIN
-      - FLOTILLA_ROOT
+      - FLOTILLA_ROOT=${FLOTILLA_ROOT:-/srv/http/flotilla}
