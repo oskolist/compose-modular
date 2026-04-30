@@ -1,0 +1,16 @@
+services:
+  nginx:
+    volumes:
+      - type: image
+        source: ${GHCR_MIRROR:-ghcr.io/oskolist}/maarkdown-viewer-image:latest
+        target: ${MAARKDOWNVIEWER_ROOT:-/srv/http/maarkdown-viewer}
+        image:
+          subpath: usr/share/nginx/html/
+      - type: bind
+        source: ../maarkdown-viewer/nginx.http.conf
+        target: /etc/nginx/conf.d/domains/${MAARKDOWNVIEWER_DOMAIN}/maarkdown-viewer.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    environment:
+      - MAARKDOWNVIEWER_ROOT=${MAARKDOWNVIEWER_ROOT:-/srv/http/maarkdown-viewer}
