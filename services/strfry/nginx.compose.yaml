@@ -2,7 +2,7 @@ services:
   nginx:
     volumes:
       - type: bind
-        source: ../strfry/nginx.http.conf
+        source: ../strfry/nginx.http.domain.conf
         target: /etc/nginx/conf.d/domains/${STRFRY_DOMAIN}/strfry.conf.template
         read_only: true
         bind:

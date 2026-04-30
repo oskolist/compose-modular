@@ -3,7 +3,7 @@ services:
   nginx:
     volumes:
       - type: bind
-        source: ../livekit/nginx.http.conf
+        source: ../livekit/nginx.http.domain.conf
         target: /etc/nginx/conf.d/domains/${LIVEKIT_DOMAIN}/livekit.conf.template
         read_only: true
         bind:

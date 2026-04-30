@@ -3,7 +3,7 @@ services:
   nginx:
     volumes:
       - type: bind
-        source: ../rssnotes/nginx.http.conf
+        source: ../rssnotes/nginx.http.domain.conf
         target: /etc/nginx/conf.d/domains/${RSSNOTES_DOMAIN}/rssnotes.conf.template
         read_only: true
         bind:

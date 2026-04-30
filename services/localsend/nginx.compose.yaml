@@ -3,7 +3,7 @@ services:
   nginx:
     volumes:
       - type: bind
-        source: ../localsend/nginx.http.conf
+        source: ../localsend/nginx.http.domain.conf
         target: /etc/nginx/conf.d/domains/${LOCALSEND_DOMAIN}/localsend.conf.template
         read_only: true
         bind:

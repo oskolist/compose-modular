@@ -2,7 +2,7 @@ services:
   nginx:
     volumes:
       - type: bind
-        source: ../telemt-panel/nginx.http.conf
+        source: ../telemt-panel/nginx.http.domain.conf
         target: /etc/nginx/conf.d/domains/${TELEMTPANEL_DOMAIN}/telemt-panel.conf.template
         read_only: true
         bind:

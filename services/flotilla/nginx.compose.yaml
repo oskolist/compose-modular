@@ -13,7 +13,7 @@ services:
           size: 50M
           mode: 0777
       - type: bind
-        source: ../flotilla/nginx.http.conf
+        source: ../flotilla/nginx.http.domain.conf
         target: /etc/nginx/conf.d/domains/${FLOTILLA_DOMAIN}/flotilla.conf.template
         read_only: true
         bind:

@@ -2,7 +2,7 @@ services:
   nginx:
     volumes:
       - type: bind
-        source: ../hollama/nginx.http.conf
+        source: ../hollama/nginx.http.domain.conf
         target: /etc/nginx/conf.d/domains/${HOLLAMA_DOMAIN}/hollama.conf.template
         read_only: true
         bind:

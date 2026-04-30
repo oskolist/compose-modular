@@ -2,7 +2,7 @@ services:
   nginx:
     volumes:
       - type: bind
-        source: ../forgejo/nginx.http.conf
+        source: ../forgejo/nginx.http.domain.conf
         target: /etc/nginx/conf.d/domains/${FORGEJO_DOMAIN}/forgejo.conf.template
         read_only: true
         bind:

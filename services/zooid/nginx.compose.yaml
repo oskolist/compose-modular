@@ -2,7 +2,7 @@ services:
   nginx:
     volumes:
       - type: bind
-        source: ../zooid/nginx.http.conf
+        source: ../zooid/nginx.http.domain.conf
         target: /etc/nginx/conf.d/domains/${ZOOID_DOMAIN}/zooid.conf.template
         read_only: true
         bind:

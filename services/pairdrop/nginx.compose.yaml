@@ -3,7 +3,7 @@ services:
   nginx:
     volumes:
       - type: bind
-        source: ../pairdrop/nginx.http.conf
+        source: ../pairdrop/nginx.http.domain.conf
         target: /etc/nginx/conf.d/domains/${PAIRDROP_DOMAIN}/pairdrop.conf.template
         read_only: true
         bind:

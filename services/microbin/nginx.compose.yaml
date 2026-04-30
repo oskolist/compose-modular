@@ -2,7 +2,7 @@ services:
   nginx:
     volumes:
       - type: bind
-        source: ../microbin/nginx.http.conf
+        source: ../microbin/nginx.http.domain.conf
         target: /etc/nginx/conf.d/domains/${MICROBIN_DOMAIN}/microbin.conf.template
         read_only: true
         bind:

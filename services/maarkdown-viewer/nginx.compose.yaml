@@ -7,7 +7,7 @@ services:
         image:
           subpath: usr/share/nginx/html/
       - type: bind
-        source: ../maarkdown-viewer/nginx.http.conf
+        source: ../maarkdown-viewer/nginx.http.domain.conf
         target: /etc/nginx/conf.d/domains/${MAARKDOWNVIEWER_DOMAIN}/maarkdown-viewer.conf.template
         read_only: true
         bind:

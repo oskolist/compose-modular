@@ -2,7 +2,7 @@ services:
   nginx:
     volumes:
       - type: bind
-        source: ../dufs/nginx.http.conf
+        source: ../dufs/nginx.http.domain.conf
         target: /etc/nginx/conf.d/domains/${DUFS_DOMAIN}/dufs.conf.template
         read_only: true
         bind:
