@@ -1,0 +1,11 @@
+# https://github.com/localsend/localsend/blob/main/server/Dockerfile
+services:
+  localsend:
+    image: ${GHCR_MIRROR:-ghcr.io/oskolist}/localsend-signaling-server:latest # debianbookwormslim-based image
+    #container_name: localsend
+    restart: unless-stopped
+    environment:
+      #- SERVER_IP=0.0.0.0 # no need
+      - SERVER_PORT=${LOCALSEND_PORT:-3000}
+    ports:
+      - "${LOCALSEND_BIND:-127.0.0.1}:${LOCALSEND_PORT:-3000}:${LOCALSEND_PORT:-3000}"

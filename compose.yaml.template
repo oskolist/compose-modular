@@ -19,6 +19,9 @@ include:
     ## Pairdrop
     #- services/pairdrop/compose.yaml
     #- services/pairdrop/nginx.compose.yaml
+    ## Localsend
+    #- services/localsend/compose.yaml
+    #- services/localsend/nginx.compose.yaml
     ## Torrent tracker
     #- services/torrust-tracker/compose.yaml
     # Chatbox

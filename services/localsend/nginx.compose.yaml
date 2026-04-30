@@ -1,0 +1,30 @@
+# https://github.com/schlagmichdoch/PairDrop/issues/33
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../localsend/nginx.http.conf
+        target: /etc/nginx/conf.d/domains/${LOCALSEND_DOMAIN}/localsend.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: image
+        source: ${GHCR_MIRROR:-ghcr.io/oskolist}/localsend-web:latest
+        target: ${LOCALSEND_ROOT:-/srv/http/localsend}.unpatched
+        image:
+          subpath: usr/share/nginx/html/
+      - type: tmpfs
+        target: ${LOCALSEND_ROOT:-/srv/http/localsend}
+        tmpfs:
+          size: 10M
+          mode: 0777
+      - type: bind
+        source: ../localsend/nginx.entrypoint.sh
+        target: /docker-entrypoint.d/localsend.sh
+        read_only: true
+        bind:
+          create_host_path: false
+    environment:
+      - LOCALSEND_ROOT=${LOCALSEND_ROOT:-/srv/http/localsend}
+      - LOCALSEND_PORT
+      - LOCALSEND_SIGNALING_URL=${LOCALSEND_SIGNALING_URL:-/v1/ws}
