@@ -17,5 +17,4 @@ services:
     #  - path: ../jumble/nginx.env
     #    required: true
     environment:
-      - JUMBLE_DOMAIN
       - JUMBLE_PORT
