@@ -19,7 +19,8 @@ cp --reflink=auto -ra "${FLOTILLA_ROOT}.unpatched"/. "${FLOTILLA_ROOT}"
 
 
 patch_string_in_root() {
-  #echo -n "$2" | sed -i "s|$1|_|g" $(grep -r -l -F "$1" "${FLOTILLA_ROOT}")
+  # Minimal version
+  #sed -i "s|$1|$(echo "$2" | sed 's/[&/\]/\\&/g')|g" $(grep -r -l -F "$1" "${FLOTILLA_ROOT}")
   local search_term="$1"
   local replace_term="$2"
   local root_dir="${3:-${FLOTILLA_ROOT}}"
@@ -41,7 +42,9 @@ patch_string_in_root() {
   # 3. -print0 and -0 are used to handle filenames with spaces safely
   grep -r -l -F "$search_term" "${root_dir}" | while read -r file; do
     echo "# [INFO] $BASH_SOURCE:$LINENO patch_string_in_root(...): Processing: $file"
-    echo "$replace_term" | sed -i "s|$search_term|_|g" "$file"
+    #echo "$replace_term" | sed -i "s|$search_term|_|g" "$file" # i thought this would work but it didn't
+    replace_term_escaped="$(echo "$replace_term" | sed 's/[&/\]/\\&/g')"
+    sed -i "s|$search_term|$replace_term_escaped|g" "$file"
   done
 }
 
