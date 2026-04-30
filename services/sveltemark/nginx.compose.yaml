@@ -1,0 +1,18 @@
+# https://github.com/MasFana/sveltemark/blob/master/Dockerfile
+# https://github.com/MasFana/sveltemark/blob/master/docker-compose.yml
+services:
+  nginx:
+    volumes:
+      - type: image
+        source: ${GHCR_MIRROR:-ghcr.io/oskolist}/sveltemark:latest
+        target: ${SVELTEMARK_ROOT:-/srv/http/sveltemark}
+        image:
+          subpath: usr/share/nginx/html/
+      - type: bind
+        source: ../sveltemark/nginx.http.domain.conf
+        target: /etc/nginx/conf.d/domains/${SVELTEMARK_DOMAIN}/sveltemark.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    environment:
+      - SVELTEMARK_ROOT=${SVELTEMARK_ROOT:-/srv/http/sveltemark}

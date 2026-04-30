@@ -68,4 +68,5 @@ include:
     ## VSCode Web standalone version
     #- services/vscode-web-standalone/nginx.compose.yaml # Static webapp
     ## Markdown viewer/editor
+    #- services/sveltemark/nginx.compose.yaml
     #- services/maarkdown-viewer/nginx.compose.yaml # Static webapp
