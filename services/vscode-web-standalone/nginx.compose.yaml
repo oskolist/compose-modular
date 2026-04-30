@@ -1,0 +1,29 @@
+# override nginx container with extra conf and html root
+services:
+  nginx:
+    volumes:
+      - type: image
+        source: ${GHCR_MIRROR:-ghcr.io/oskolist}/vscode-web-standalone:latest
+        target: ${VSCODEWEBSTANDALONE_ROOT:-/srv/http/vscode-web-standalone}
+        image:
+          subpath: app/
+      - type: bind
+        source: ../vscode-web-standalone/nginx.http.conf
+        target: /etc/nginx/conf.d/domains/${VSCODEWEBSTANDALONE_DOMAIN}/vscode-web-standalone.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      #- type: bind
+      #  source: ../vscode-web-standalone/nginx.entrypoint.sh
+      #  target: /docker-entrypoint.d/vscode-web-standalone.sh
+      #  read_only: true
+      #  bind:
+      #    create_host_path: false
+      #- type: bind
+      #  source: ../vscode-web-standalone/nginx.envsubst.conf
+      #  target: /etc/envsubst.d/vscode-web-standalone.conf
+      #  read_only: true
+      #  bind:
+      #    create_host_path: false
+    environment:
+      - VSCODEWEBSTANDALONE_ROOT=${VSCODEWEBSTANDALONE_ROOT:-/srv/http/vscode-web-standalone}

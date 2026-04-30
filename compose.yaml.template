@@ -64,3 +64,5 @@ include:
     #- services/fortivpn-to-socks5/compose.yaml
     ## SNI Spooing rust
     #- services/sni-spoofing-rust/compose.yaml
+    # Tools
+    #- services/vscode-web-standalone/nginx.compose.yaml # Static webapp
