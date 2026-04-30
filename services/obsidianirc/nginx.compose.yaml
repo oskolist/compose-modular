@@ -4,15 +4,20 @@ services:
     volumes:
       - type: image
         source: mattfly/obsidian:latest
-        target: ${OBSIDIANIRC_ROOT}.unpatched
+        target: ${OBSIDIANIRC_ROOT:-/srv/http/ObsidianIRC}.unpatched
         image:
           subpath: usr/share/nginx/html/
       # this is also does not work because "${OBSIDIANIRC_ROOT}" is mounted as read-only and "${OBSIDIANIRC_ROOT}" and docker cannot create the "${OBSIDIANIRC_ROOT}/external" directory to mount tmpfs in it. as a workaround i did redirect "/server.json" to "/etc/obsidianirc/servers.json" in nginx.http.conf
       #- type: tmpfs
-      #  target: ${OBSIDIANIRC_ROOT}/external
+      #  target: ${OBSIDIANIRC_ROOT:-/srv/http/ObsidianIRC}/external
       #  tmpfs:
       #    size: 5M
       #    #mode: 0777
+      - type: tmpfs
+        target: ${OBSIDIANIRC_ROOT:-/srv/http/ObsidianIRC}
+        tmpfs:
+          size: 50M
+          mode: 0777
       - type: bind
         source: ../obsidianirc/nginx.http.conf
         target: /etc/nginx/conf.d/domains/${OBSIDIANIRC_DOMAIN}/obsidianirc.conf.template
@@ -35,5 +40,4 @@ services:
     #  - path: ../obsidianirc/nginx.env
     #    required: true
     environment:
-      - OBSIDIANIRC_DOMAIN
-      - OBSIDIANIRC_ROOT
+      - OBSIDIANIRC_ROOT=${OBSIDIANIRC_ROOT:-/srv/http/ObsidianIRC}

@@ -3,7 +3,7 @@ if [ -z "${OBSIDIANIRC_ROOT}.unpatched" ] || [ ! -d "${OBSIDIANIRC_ROOT}.unpatch
   echo "[ERROR] ${OBSIDIANIRC_ROOT}.unpatched is not set or does not exists"
   exit 1
 fi
-cp --reflink=auto -ra "${OBSIDIANIRC_ROOT}.unpatched" "${OBSIDIANIRC_ROOT}"
+cp --reflink=auto -ra "${OBSIDIANIRC_ROOT}.unpatched"/. "${OBSIDIANIRC_ROOT}"
 
 # Patching - TODO: add a environment variable to only patch the app when user asked for it
 if [ -d "/etc/obsidianirc/servers.d" ]; then
