@@ -3,7 +3,8 @@
 services:
   fortivpn-to-socks5:
     #image: ${GHCR_MIRROR:-ghcr.io/tosainu}/fortivpn-socks5:master
-    image: ${GHCR_MIRROR:-ghcr.io/minlaxz}/fortivpn-to-socks5:main
+    #image: ${GHCR_MIRROR:-ghcr.io/minlaxz}/fortivpn-to-socks5:main
+    image: ${GHCR_MIRROR:-ghcr.io/oskolist}/fortivpn-socks5-container:latest
     #container_name: fortivpn-socks5
     restart: unless-stopped
     cap_add:
