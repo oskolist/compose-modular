@@ -1,5 +1,6 @@
 /secrets/
 /data/
+/temp/
 /.env.base
 /compose.yaml
 *.env

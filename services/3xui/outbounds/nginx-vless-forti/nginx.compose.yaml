@@ -3,13 +3,11 @@ services:
     volumes:
       - type: bind
         source: ../3xui/outbounds/nginx-vless-forti/nginx.conf
-        target: /etc/nginx/conf.d/3xui.outbound.d/nginx-vless-forti.conf.template
+        target: /etc/nginx/conf.d/domains/${XUI_OUTBOUND_NGINXVLESSFORTI_PATH_DOMAIN:-${XUI_DOMAIN}}/3xui-outbounds-nginx-vless-forti.conf.template
         read_only: true
         bind:
           create_host_path: false
-    #env_file:
-    #  - path: ../3xui/outbounds/nginx-vless-forti/nginx.env
-    #    required: true
     environment:
-      - FLOTILLA_DOMAIN
-      - FLOTILLA_ROOT
+      - XUI_OUTBOUND_NGINXVLESSFORTI_PATH_PREFIX
+      - XUI_OUTBOUND_NGINXVLESSFORTI_SOCKET_DIR
+      - XUI_OUTBOUND_NGINXVLESSFORTI_SOCKET_NAME
