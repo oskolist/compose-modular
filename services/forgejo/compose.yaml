@@ -2,7 +2,8 @@
 services:
   forgejo:
     #image: codeberg.org/forgejo/forgejo:14-rootless
-    image: forgejoclone/forgejo:14-rootless
+    image: kleen/forgejo:latest
+    #image: forgejoclone/forgejo:14-rootless # commented because does not have arm64
     user: 1000:1000
     volumes:
       - ../../data/forgejo/forgejo:/var/lib/gitea
