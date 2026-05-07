@@ -1,0 +1,28 @@
+# override nginx container with extra conf and html root
+services:
+  nginx:
+    volumes:
+      - type: image
+        source: vectorim/element-web:latest
+        target: ${ELEMENTWEB_ROOT:-/srv/http/element-web}
+        image:
+          subpath: app/
+      #- type: tmpfs
+      #  target: ${ELEMENTWEB_ROOT:-/srv/http/element-web}
+      #  tmpfs:
+      #    size: 50M
+      #    mode: 0777
+      - type: bind
+        source: ../element-web/config.json
+        target: ${ELEMENTWEB_ROOT:-/srv/http/element-web}.config/config.json
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../element-web/nginx.http.domain.conf
+        target: /etc/nginx/conf.d/domains/${ELEMENTWEB_DOMAIN}/element-web.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    environment:
+      - ELEMENTWEB_ROOT=${ELEMENTWEB_ROOT:-/srv/http/element-web}
