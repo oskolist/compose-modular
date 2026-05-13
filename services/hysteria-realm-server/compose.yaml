@@ -1,0 +1,32 @@
+# https://github.com/apernet/hysteria-realm-server/blob/master/Dockerfile
+services:
+  hysteria-realm-server:
+    image: ${GHCR_MIRROR:-ghcr.io/apernet}/hysteria-realm-server:latest # scratch-based image
+    #image: ${GHCR_MIRROR:-ghcr.io/duoyang283-lab}/hysteria-realm-server:latest # scratch-based image
+    #container_name: hysteria-realm-server
+    restart: unless-stopped
+    environment:
+      - HYSTERIA_REALM_LISTEN=":${HYSTERIAREALM_PORT:-8443}"
+      - HYSTERIA_REALM_DEBUG="${HYSTERIAREALM_DEBUG:-false}"
+      - HYSTERIA_REALM_TOKEN="${HYSTERIAREALM_TOKEN?HYSTERIA_REALM_TOKEN is required}"
+      #- HYSTERIA_REALM_KEY="/run/secrets/privkey.pem"
+      #- HYSTERIA_REALM_CERT="/run/secrets/fullchain.pem"
+    ports:
+      - "${HYSTERIAREALM_BIND:-127.0.0.1}:${HYSTERIAREALM_PORT:-3000}:${HYSTERIAREALM_PORT:-3000}"
+    #secrets:
+    #  - source: hysteriarealm_ssl_certificate
+    #    target: fullchain.pem
+    #    uid: "101"
+    #    gid: "101"
+    #    mode: 0o444
+    #  - source: hysteriarealm_ssl_certificate_key
+    #    target: privkey.pem
+    #    uid: "101"
+    #    gid: "101"
+    #    mode: 0o440
+
+#secrets:
+#  hysteriarealm_ssl_certificate:
+#    environment: HYSTERIAREALM_SSL_CERT
+#  hysteriarealm_ssl_certificate_key:
+#    environment: HYSTERIAREALM_SSL_CERT_KEY

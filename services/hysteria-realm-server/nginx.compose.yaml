@@ -1,0 +1,14 @@
+services:
+  hysteria-realm-server:
+    environment:
+      - HYSTERIA_REALM_TRUSTED_PROXY_HEADER="X-Forwarded-For"
+  nginx:
+    volumes:
+      - type: bind
+        source: ../hysteria-realm-server/nginx.http.domain.conf
+        target: /etc/nginx/conf.d/domains/${HYSTERIAREALM_DOMAIN}/hysteria-realm-server.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    environment:
+      - HYSTERIAREALM_PORT=${HYSTERIAREALM_PORT:-8443}
