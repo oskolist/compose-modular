@@ -1,0 +1,18 @@
+# https://docs.netbird.io/get-started/install/docker
+services:
+  netbird:
+    image: netbirdio/netbird:latest
+    #container_name: netbird-client
+    #hostname: <HOSTNAME>
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_RESOURCE
+    devices:
+      # Required when using userspace mode or when kernel module is not available
+      - /dev/net/tun
+    network_mode: host
+    volumes:
+      - ../../data/netbird:/var/lib/netbird
+    environment:
+      - NB_SETUP_KEY=${NETBIRD_SETUP_KEY}
