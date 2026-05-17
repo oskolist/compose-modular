@@ -17,22 +17,22 @@ services:
       # Nginx config:
       ## Stream blocks
       - type: bind
-        source: ../nginx/stream.conf
-        target: /etc/nginx/stream-conf.d/00-main.conf.template
+        source: ../nginx/stream.d/main.conf
+        target: /etc/nginx/stream.d/00-main.conf.template
         read_only: true
         bind:
           create_host_path: false
       ## HTTP blocks
       ### Default settings
       - type: bind
-        source: ../nginx/http/00-main.conf
+        source: ../nginx/http.d/main.conf
         target: /etc/nginx/conf.d/00-main.conf.template
         read_only: true
         bind:
           create_host_path: false
       ### {MAIN_DOMAIN}
       - type: bind
-        source: ../nginx/http/domains/@.conf
+        source: ../nginx/http.d/domains/@.conf
         target: /etc/nginx/conf.d/domains/${MAIN_DOMAIN}/00-main.conf.template
         read_only: true
         bind:
@@ -46,7 +46,7 @@ services:
           create_host_path: false
       ### main.{MAIN_DOMAIN}
       - type: bind
-        source: ../nginx/http/domains/main.conf
+        source: ../nginx/http.d/domains/main.conf
         target: /etc/nginx/conf.d/domains/main.${MAIN_DOMAIN}/00-main.conf.template
         read_only: true
         bind:
@@ -59,27 +59,27 @@ services:
         bind:
           create_host_path: false
       # Nginx snippets:
-      # Unfortunately we cannot do this because this makes "/etc/nginx/snippets" in host read-only and cannot write output of envsubst in them:
+      # Unfortunately we cannot do this because this makes "/etc/nginx/snippet.d" in host read-only and cannot write output of envsubst in them:
       #- type: bind
-      #  source: ./snippets/
-      #  target: /etc/nginx/snippets
+      #  source: ./snippet.d/
+      #  target: /etc/nginx/snippet.d
       #  read_only: true
       # So we need to do this:
       - type: bind
-        source: ../nginx/snippets/http_server_listen_ssl.conf.template
-        target: /etc/nginx/snippets/http_server_listen_ssl.conf.template
+        source: ../nginx/snippet.d/http_server_listen_ssl.conf.template
+        target: /etc/nginx/snippet.d/http_server_listen_ssl.conf.template
         read_only: true
         bind:
           create_host_path: false
       - type: bind
-        source: ../nginx/snippets/server_ssl_options.conf
-        target: /etc/nginx/snippets/server_ssl_options.conf
+        source: ../nginx/snippet.d/server_ssl_options.conf
+        target: /etc/nginx/snippet.d/server_ssl_options.conf
         read_only: true
         bind:
           create_host_path: false
       - type: bind
-        source: ../nginx/snippets/map.d/is_websocket.conf
-        target: /etc/nginx/snippets/map.d/is_websocket.conf
+        source: ../nginx/map.d/is_websocket.conf
+        target: /etc/nginx/map.d/is_websocket.conf
         read_only: true
         bind:
           create_host_path: false
@@ -146,10 +146,10 @@ services:
         done
         #find /etc/exec -name "*.template" -exec sh -c 'echo [INFO] "Executing {}"; "{}" || echo "{} -> failed"' \;
         
-        if [ -d "/etc/nginx/stream-conf.d" ] && [ ! -f "/tmp/nginx_stream_block_patched.info" ]; then
+        if [ -d "/etc/nginx/stream.d" ] && [ ! -f "/tmp/nginx_stream_block_patched.info" ]; then
           cat <<-EOF >>/etc/nginx/nginx.conf
         stream {
-          include /etc/nginx/stream-conf.d/*.conf;
+          include /etc/nginx/stream.d/*.conf;
         }
         EOF
           touch /tmp/nginx_stream_block_patched.info
@@ -163,17 +163,17 @@ services:
         #      echo "server {"
         #        echo "  include $$conf_file;"
         #      echo "}"
-        #    } | tee "/etc/nginx/conf.d/$${domain_name}.conf"
+        #    } | tee "/etc/nginx/conf.d/domains/$${domain_name}.conf"
         #done
         for domain_dir in /etc/nginx/conf.d/domains/*; do
           [ ! -d "$$domain_dir" ] && continue
           domain_name=$(basename "$$domain_dir")
-          echo "[DEBUG] The following content will be written in /etc/nginx/conf.d/$${domain_name}.conf"
+          echo "[DEBUG] The following content will be written in /etc/nginx/conf.d/domains/$${domain_name}.conf"
           {
             echo "server {"
             echo "  include /etc/nginx/variables.d/*.conf;"
-            echo "  include /etc/nginx/snippets/http_server_listen_ssl.conf;"
-            echo "  include /etc/nginx/snippets/server_ssl_options.conf;"
+            echo "  include /etc/nginx/snippet.d/http_server_listen_ssl.conf;"
+            echo "  include /etc/nginx/snippet.d/server_ssl_options.conf;"
             echo "  server_name $$domain_name;"
             echo ""
             for conf_file in "$$domain_dir"/*.conf; do
@@ -183,8 +183,8 @@ services:
             done
             echo ""
             echo "}"
-          } > "/etc/nginx/conf.d/$${domain_name}.conf"
-          #} | tee "/etc/nginx/conf.d/$${domain_name}.conf"
+          } > "/etc/nginx/conf.d/domains/$${domain_name}.conf"
+          #} | tee "/etc/nginx/conf.d/domains/$${domain_name}.conf"
         done
 
 
