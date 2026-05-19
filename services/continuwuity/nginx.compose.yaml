@@ -1,0 +1,32 @@
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../continuwuity/nginx.upstream.conf
+        target: /etc/nginx/upstream.d/continuwuity.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../continuwuity/nginx.http.domain.conf
+        target: /etc/nginx/conf.d/domains/${CONTINUWUITY_DOMAIN}/continuwuity.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../../temp/${CONTINUWUITY_SOCKET_DIR:-run/continuwuity}/
+        target: /mnt/continuwuity/${CONTINUWUITY_SOCKET_DIR:-run/continuwuity}
+        read_only: false
+        bind:
+          create_host_path: true
+    environment:
+      - CONTINUWUITY_DOMAIN
+      #- CONTINUWUITY_PORT=${CONTINUWUITY_PORT:-8008}
+      - CONTINUWUITY_SOCKET_PATH=${CONTINUWUITY_SOCKET_PATH:-${CONTINUWUITY_SOCKET_DIR:-run/continuwuity}/${CONTINUWUITY_SOCKET_NAME:-continuwuity.sock}}
+      - CONTINUWUITY_SERVER_NAME=${CONTINUWUITY_SERVER_NAME:-${CONTINUWUITY_DOMAIN}}
+      - CONTINUWUITY_MAX_REQUEST_SIZE=${CONTINUWUITY_MAX_REQUEST_SIZE:-20971520}
+  continuwuity:
+    environment:
+      CONTINUWUITY_ADDRESS: !reset null
+      CONTINUWUITY_UNIX_SOCKET_PATH: ${CONTINUWUITY_SOCKET_PATH:-${CONTINUWUITY_SOCKET_DIR:-run/continuwuity}/${CONTINUWUITY_SOCKET_NAME:-continuwuity.sock}}
+      CONTINUWUITY_UNIX_SOCKET_PERMS: ${CONTINUWUITY_UNIX_SOCKET_PERMS:-666}

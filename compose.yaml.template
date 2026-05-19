@@ -37,6 +37,12 @@ include:
     #- services/strfry/nginx.compose.yaml
     #- services/zooid/compose.yaml
     #- services/zooid/nginx.compose.yaml
+    # Matrix
+    ## Client
+    #- services/element-web/nginx.compose.yaml
+    ## Server
+    #- services/continuwuity/compose.yaml
+    #- services/continuwuity/nginx.compose.yaml
     # IRC
     ## Client
     #- services/obsidianirc/nginx.compose.yaml # Static webapp

@@ -1,0 +1,44 @@
+# https://continuwuity.org/deploying/docker.html
+# https://continuwuity.org/reference/config
+# https://continuwuity.org/configuration#environment-variables
+# https://continuwuity.org/advanced/delegation#docker-compose-examples
+#
+# https://forgejo.ellis.link/continuwuation/continuwuity/pulls/971/files
+# https://tomfos.tr/matrix/continuwuity/reverse-proxies/nginx/
+services:
+  continuwuity:
+    #image: "forgejo.ellis.link/continuwuation/continuwuity:latest"
+    image: jadedblueeyes/continuwuity:latest
+    restart: unless-stopped
+    command: /sbin/conduwuit
+    #ports:
+    #  - ${CONTINUWUITY_BIND:-127.0.0.1}:${CONTINUWUITY_PORT:-8008}:${CONTINUWUITY_PORT:-8008}
+    volumes:
+      - ../../data/continuwuity:/var/lib/continuwuity
+      - type: bind
+        source: ../../temp/${CONTINUWUITY_SOCKET_DIR:-run/continuwuity}
+        target: /${CONTINUWUITY_SOCKET_DIR:-run/continuwuity}
+        read_only: false
+        bind:
+          create_host_path: true
+      #- ../continuwuity/continuwuity-resolv.conf:/etc/resolv.conf
+      #- ../continuwuity/config.toml:/etc/continuwuity.toml
+    env_file:
+      ../continuwuity/.env
+    environment:
+      CONTINUWUITY_DATABASE_PATH: /var/lib/continuwuity
+      # note: only one of the `CONTINUWUITY_ADDRESS` and `CONTINUWUITY_UNIX_SOCKET_PATH` should be set otherwise you get 'TOML keys "address" and "unix_socket_path" were both defined.' error.
+      CONTINUWUITY_ADDRESS: 0.0.0.0
+      #CONTINUWUITY_UNIX_SOCKET_PATH: ${CONTINUWUITY_SOCKET_PATH:-${CONTINUWUITY_SOCKET_DIR:-run/continuwuity}/${CONTINUWUITY_SOCKET_NAME:-continuwuity.sock}}
+      #CONTINUWUITY_CONFIG: '/etc/continuwuity.toml'
+      CONTINUWUITY_MAX_REQUEST_SIZE: ${CONTINUWUITY_MAX_REQUEST_SIZE:-20971520}
+      CONTINUWUITY_WELL_KNOWN__CLIENT: ${CONTINUWUITY_DOMAIN}:${HTTPS_PORT}
+      CONTINUWUITY_WELL_KNOWN__SERVER: ${CONTINUWUITY_DOMAIN}:${HTTPS_PORT}
+      #CONTINUWUITY_WELL_KNOWN: |
+      #  {
+      #    client=https://${CONTINUWUITY_DOMAIN}:${HTTPS_PORT},
+      #    server=${CONTINUWUITY_FEDERATION_DOMAIN}:${CONTINUWUITY_FEDERATION_PORT}
+      #  }
+    # https://continuwuity.org/deploying/docker.html#accessing-the-servers-console
+    stdin_open: true
+    tty: true
