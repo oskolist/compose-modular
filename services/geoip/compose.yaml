@@ -1,0 +1,23 @@
+# https://github.com/lrstanley/geoip/blob/master/Dockerfile
+# https://github.com/lrstanley/geoip/blob/master/internal/models/flags.go
+# https://github.com/lrstanley/chix/blob/master/realip.go
+services:
+  geoip:
+    #image: ${GHCR_MIRROR:-ghcr.io/lrstanley}/geoip:latest
+    image: ${GHCR_MIRROR:-ghcr.io/oskolist}/geoip:latest
+    #container_name: geoip
+    restart: unless-stopped
+    volumes:
+      - ../../data/geoip:/data
+    environment:
+      HTTP_BIND_ADDR: ":${GEOIP_PORT:-8080}"
+      HTTP_TRUSTED_PROXIES: "${GEOIP_HTTP_TRUSTED_PROXIES:-all}"
+      HTTP_LIMIT: "${GEOIP_HTTP_LIMIT:-2000}"
+      HTTP_CORS: "${GEOIP_HTTP_CORS:-*}"
+      DB_GEOIP_PATH: "/data/GeoLite2-City.mmdb"
+      DB_ASN_PATH: "/data/GeoLite2-ASN.mmdb"
+      DB_LICENSE_KEY: "DUMMY"
+      DNS_LOCAL: ${GEOIP_DNS_LOCAL:-1}
+    ports:
+      - "${GEOIP_BIND:-127.0.0.1}:${GEOIP_PORT:-8080}:${GEOIP_PORT:-8080}"
+    command: ["geoip"]

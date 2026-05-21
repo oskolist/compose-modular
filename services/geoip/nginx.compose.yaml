@@ -1,0 +1,11 @@
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../geoip/nginx.http.domain.conf
+        target: /etc/nginx/conf.d/domains/${GEOIP_DOMAIN}/geoip.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    environment:
+      - GEOIP_PORT=${GEOIP_PORT:-8080}
