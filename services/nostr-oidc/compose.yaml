@@ -1,0 +1,15 @@
+services:
+  nostr-oidc:
+    #image: ${GHCR_MIRROR:-ghcr.io/lescuer97}/nostr-oidc:latest
+    image: ${GHCR_MIRROR:-ghcr.io/oskolist}/nostr-oidc:latest
+    restart: unless-stopped
+    volumes:
+      - ../../data/nostr-oidc:/app/data
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - "${NOSTROIDC_BIND:-127.0.0.1}:${NOSTROIDC_PORT:-8082}:${NOSTROIDC_PORT:-8082}"
+    environment:
+      ADMIN_USER_NPUB: "${NOSTROIDC_ADMIN_USER_NPUB?is required}"
+      OIDC_ISSUER: "${NOSTROIDC_OIDC_ISSUER:-http://0.0.0.0:8082}"
+      OIDC_ALLOW_INSECURE: "${NOSTROIDC_OIDC_ALLOW_INSECURE:-false}"

@@ -1,0 +1,11 @@
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../nostr-oidc/nginx.http.domain.conf
+        target: /etc/nginx/conf.d/domains/${NOSTROIDC_DOMAIN}/nostr-oidc.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    environment:
+      - NOSTROIDC_PORT=${NOSTROIDC_PORT:-8082}
