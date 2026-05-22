@@ -9,6 +9,11 @@ include:
     #- services/livekit/nginx.compose.yaml
     ## Coturn
     #- services/coturn/compose.yaml
+    ## Authentication
+    ### OIDC
+    #### Nostr-OIDC
+    #- services/nostr-oidc/compose.yaml
+    #- services/nostr-oidc/nginx.compose.yaml
     # Filesharing
     ## Uploadfile
     #- services/dufs/compose.yaml
@@ -29,7 +34,9 @@ include:
     #- services/hollama/nginx.compose.yaml
     # Nostr
     ## Client
+    ### Flotilla
     #- services/flotilla/nginx.compose.yaml # Static webapp
+    ### NoSpeak
     #- services/nospeak/compose.yaml
     #- services/nospeak/nginx.compose.yaml
     ## Relay
@@ -72,9 +79,12 @@ include:
     #- services/sni-spoofing-rust/compose.yaml
     # Git Server
     ## Forgejo
-    - services/forgejo/compose.yaml
-    - services/forgejo/nginx.compose.yaml
+    #- services/forgejo/compose.yaml
+    #- services/forgejo/nginx.compose.yaml
     # Tools
+    ## GeoIP
+    #- services/geoip/compose.yaml
+    #- services/geoip/nginx.compose.yaml
     ## VSCode Web standalone version
     #- services/vscode-web-standalone/nginx.compose.yaml # Static webapp
     ## Markdown viewer/editor
