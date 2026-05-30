@@ -1,0 +1,34 @@
+# https://github.com/jnovack/autossh
+services:
+  autossh:
+    image: jnovack/autossh:latest
+    #container_name: autossh
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ${AUTOSSH_KEY_FILE:-../../data/autossh/id_ed25519}
+        target: /id_ed25519
+        read_only: true
+      - type: bind
+        source: ${AUTOSSH_KNOWN_HOSTS_FILE:-../../data/autossh/known_hosts}
+        target: /known_hosts
+        read_only: true
+    #ports:
+    #  - "${AUTOSSH_BIND:-127.0.0.1}:${AUTOSSH_TUNNEL_PORT}:${AUTOSSH_TUNNEL_PORT}"
+    environment:
+      - SSH_REMOTE_USER=${AUTOSSH_REMOTE_USER:-}
+      - SSH_REMOTE_HOST=${AUTOSSH_REMOTE_HOST:-}
+      - SSH_REMOTE_PORT=${AUTOSSH_REMOTE_PORT:-}
+      - SSH_TUNNEL_PORT=${AUTOSSH_TUNNEL_PORT:-}
+      - SSH_TARGET_HOST=${AUTOSSH_TARGET_HOST:-}
+      - SSH_TARGET_PORT=${AUTOSSH_TARGET_PORT:-}
+      - SSH_STRICT_HOST_IP_CHECK=${AUTOSSH_STRICT_HOST_IP_CHECK:-}
+      #- SSH_KEY_FILE=${AUTOSSH_KEY_FILE:-}
+      - SSH_KEY_FILE=/id_ed25519
+      #- SSH_KNOWN_HOSTS_FILE=${AUTOSSH_KNOWN_HOSTS_FILE:-}
+      - SSH_MODE=${AUTOSSH_MODE:--L}
+      - SSH_BIND_IP=${AUTOSSH_BIND_IP:-0.0.0.0}
+      - SSH_SERVER_ALIVE_INTERVAL=${AUTOSSH_SERVER_ALIVE_INTERVAL:-}
+      - SSH_SERVER_ALIVE_COUNT_MAX=${AUTOSSH_SERVER_ALIVE_COUNT_MAX:-}
+      - SSH_MONITOR_PORT=${AUTOSSH_MONITOR_PORT:-}
+      - SSH_OPTIONS=${AUTOSSH_OPTIONS:-}
