@@ -11,5 +11,6 @@ services:
     #  - path: ../microbin/nginx.env
     #    required: true
     environment:
-      - MICROBIN_DOMAIN
-      - MICROBIN_PORT
+      - MICROBIN_PORT=${MICROBIN_PORT:-8001}
+    depends_on:
+      - microbin
