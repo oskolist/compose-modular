@@ -6,23 +6,25 @@ services:
     image: ipfs/kubo:master-latest
     #container_name: kubo
     restart: unless-stopped
-    network_mode: "host"
-    userns_mode: "host"
-    # Did not check myself but seems UDP on docker is not very reliable. so commented these and instead used `network_mode: host` which also requires `userns_mode: "host"` in [userns-remap](https://docs.docker.com/engine/security/userns-remap/) mode:
+    # (Did not check myself!) but seems UDP port forwarding on docker is not very reliable/stable. so instead i commented these and added `network_mode: host`(`userns_mode: "host"` is required in [userns-remap](https://docs.docker.com/engine/security/userns-remap/#user-namespace-known-limitations) mode:
     #ports:
     #  - "${KUBO_BIND:-0.0.0.0}:${KUBO_PORT:-4001}:4001" # IPFS Swarm Port
     #  - "${KUBO_BIND:-0.0.0.0}:${KUBO_PORT:-4001}:4001/udp" # IPFS Swarm Port. TODO: i think this is really not neccesary as above will forward udp as well
     #  - "${KUBO_API_BIND:-127.0.0.1}:${KUBO_API_PORT:-5001}:5001" # IPFS API Port
     #  - "${KUBO_GATEWAY_BIND:-127.0.0.1}:${KUBO_GATEWAY_PORT:-8080}:8080" # IPFS Gateway Port
+    network_mode: "host"
+    userns_mode: "host"
+    #
     env_file:
       ../kubo/.env
     environment:
-      - GOMAXPROCS=4
-      - GOMEMLIMIT=2000MiB
-      - GOLOG_LOG_LEVEL=error,provider=debug,dht/provider=debug
       - IPFS_PATH=/data/ipfs
-      - IPFS_TELEMETRY=off
-      - IPFS_PROFILE=server
+      - GOMAXPROCS=${KUBO_MAXPROCS:-4}
+      - GOMEMLIMIT=${KUBO_MEMLIMIT:-2000MiB}
+      - GOLOG_LOG_LEVEL=${KUBO_LOG_LEVEL:-}
+      - IPFS_TELEMETRY=${KUBO_TELEMETRY:-false}
+      - IPFS_PROFILE=${KUBO_PROFILE:-server}
+      - KUBO_IS_NETWORK_MODE_HOST=${KUBO_IS_NETWORK_MODE_HOST:-true}
     volumes:
       - ../../data/kubo/export:/export # to allow easy file sharing to IPFS using move/copy any file to "../../data/ipfs/export"
       - ../../data/kubo:/data/ipfs

@@ -10,8 +10,8 @@
 # https://techssh.com/self-hosting/set-up-a-coturn-turn-server-for-matrix-synapse-voice-call/
 
 services:
-  turnserver:
-    image: "coturn/coturn"
+  coturn:
+    image: "coturn/coturn:latest" # debian-based image
     restart: unless-stopped
     secrets: # TODO: check correct uid and gid
       - source: ssl_certificate
@@ -26,11 +26,11 @@ services:
         mode: 0o440
     volumes:
       - type: bind
-        source: ../../data/ipmonitor/currentip.txt
-        target: /currentip.txt
+        source: ../../temp/ipmonitor
+        target: /mnt/ipmonitor/temp
         read_only: true
         bind:
-          create_host_path: false
+          create_host_path: true
       - type: bind
         source: ../coturn/turnserver.conf
         target: /etc/coturn/turnserver.conf.template
@@ -42,7 +42,7 @@ services:
         target: /usr/local/bin/go-envsubst
         image:
           subpath: usr/bin/envsubst
-      # We use busybox to allow the upstream image to be changed easily to alpine-based one (maybe in the future)
+      # We use busybox to allow the upstream image to be changed easily to alpine-based one
       - type: image
         source: library/busybox:stable-musl
         target: /usr/local/bin/busybox
@@ -50,15 +50,18 @@ services:
           subpath: bin/busybox
       - type: tmpfs
         target: /var/lib/coturn
-    network_mode: "host"
-    # Commented because this makes docker compose hang/freeze (maybe only in rootless mode?) because it want to portforward every port between COTURN_MIN_PORT and COTURN_MAX_PORT. so lets just use "network_mode: host"
+    # (Did not check myself!) but seems UDP port forwarding on docker is not very reliable/stable. so instead i commented these and added `network_mode: host`(`userns_mode: "host"` is required in [userns-remap](https://docs.docker.com/engine/security/userns-remap/#user-namespace-known-limitations) mode.
+    # Also it can make docker-compose hang/freeze(maybe only in rootless mode?) because it want to port forward every port between $COTURN_MIN_PORT and $COTURN_MAX_PORT
     #ports:
     #  - "${COTURN_PORT:-3478}:${COTURN_PORT:-3478}"
     #  - "${COTURN_PORT:-3478}:${COTURN_PORT:-3478}/udp"
-    #  # I commented because COTURN_PORT can be used for both SSL or raw if clients support that
-    #  #- "${COTURN_SSL_PORT:-5349}:${COTURN_SSL_PORT:-5349}"
-    #  #- "${COTURN_SSL_PORT:-5349}:${COTURN_SSL_PORT:-5349}/udp"
+    #  # maybe we should comment COTURN_SSL_PORT sections because COTURN_PORT works for both SSL and raw but depends on client support
+    #  - "${COTURN_SSL_PORT:-5349}:${COTURN_SSL_PORT:-5349}"
+    #  - "${COTURN_SSL_PORT:-5349}:${COTURN_SSL_PORT:-5349}/udp"
     #  - "${COTURN_MIN_PORT:-49152}-${COTURN_MAX_PORT:-65535}:${COTURN_MIN_PORT:-49152}-${COTURN_MAX_PORT:-65535}/udp"
+    network_mode: "host"
+    userns_mode: "host"
+    #
     env_file:
       - path: ../coturn/.env
         required: true
@@ -73,13 +76,37 @@ services:
         #    exit 0
         #}
         #trap 'term_handler' SIGTERM SIGINT
-
-        export COTURN_EXTERNAL_IP="$$(cat /currentip.txt)"
-        echo "# [INFO] set COTURN_EXTERNAL_IP to \"$$COTURN_EXTERNAL_IP\""
-
+        case "$${IPMONITOR_IS_ENABLED-}" in
+          true|True|y|yes|1)
+            IP="$$(cat /mnt/ipmonitor/temp/ipv4.txt || true)"
+            if [ -n "$$IP" ]; then
+              export COTURN_EXTERNAL_IP="$$IP"
+              echo "# [DEBUG] used ipmonitor to set \$$COTURN_EXTERNAL_IP to $$COTURN_EXTERNAL_IP"
+            else
+              echo "# [ERROR] tried to use ipmonitor service but \$$IP is empty!"
+              exit 1
+            fi
+            ;;
+          *)
+            echo "# [DEBUG] ipmonitor service is not enabled"
+            if [ -n "$$COTURN_EXTERNAL_IP" ]; then
+              echo "# [INFO] using predefined COTURN_EXTERNAL_IP to \"$$COTURN_EXTERNAL_IP\""
+            elif [ ! "${COTURN_EXTERNAL_IP:-none}" = "none" ]; then
+              export COTURN_EXTERNAL_IP="${COTURN_EXTERNAL_IP:-none}" # we used `-none` section to suppress docker-compose warning
+              echo "# [INFO] using defined COTURN_EXTERNAL_IP(in docker-compose) for \"$$COTURN_EXTERNAL_IP\""
+            elif [ ! "${PUBLIC_IP:-none}" = "none" ]; then
+              echo "# [INFO] using defined PUBLIC_IP(in docker-compose) for \"$$COTURN_EXTERNAL_IP\""
+              export COTURN_EXTERNAL_IP="${PUBLIC_IP:-none}" # we used `-none` section to suppress docker-compose warning
+            else
+              echo "# [WARNING] starting coturn without COTURN_EXTERNAL_IP"
+            fi
+            ;;
+        esac
         echo "# [INFO] Patching /etc/coturn/turnserver.conf"
-        go-envsubst -no-unset -no-empty -i "/etc/coturn/turnserver.conf.template" -o "/etc/coturn/turnserver.conf"
+        go-envsubst -i "/etc/coturn/turnserver.conf.template" -o "/etc/coturn/turnserver.conf"
         exec busybox su -s /bin/bash nobody -c "set -ex; source /usr/local/bin/docker-entrypoint.sh --log-file=/tmp/stdout"
+
+# TODO: check if this is needed
 secrets:
   ssl_certificate:
     environment: SSL_CERT

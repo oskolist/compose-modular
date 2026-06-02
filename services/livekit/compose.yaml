@@ -5,20 +5,6 @@ services:
     user: "nobody:nogroup"
     image: livekit/livekit-server:latest
     restart: unless-stopped
-    #network_mode: host
-    ports:
-      - "${LIVEKIT_BIND:-127.0.0.1}:${LIVEKIT_PORT:-7880}:${LIVEKIT_PORT:-7880}/tcp"
-      - "${LIVEKIT_RTC_TCP_PORT:-7881}:${LIVEKIT_RTC_TCP_PORT:-7881}/tcp"
-      - "${LIVEKIT_RTC_PORT_RANGE_START}-${LIVEKIT_RTC_PORT_RANGE_END}:${LIVEKIT_RTC_PORT_RANGE_START}-${LIVEKIT_RTC_PORT_RANGE_END}/udp"
-    env_file:
-      - path: ../livekit/.env
-        required: true
-    deploy:
-      resources:
-        limits:
-          cpus: 2.0
-          memory: 2G
-    # To use config instead of environment variables
     #volumes:
     #  - type: image
     #    source: ${GHCR_MIRROR:-ghcr.io/yasn77}/envsubst-image:1.4.2
@@ -31,9 +17,41 @@ services:
     #    read_only: true
     #    bind:
     #      create_host_path: false
+    # (Did not check myself!) but seems UDP port forwarding on docker is not very reliable/stable. so instead i commented these and added `network_mode: host`(`userns_mode: "host"` is required in [userns-remap](https://docs.docker.com/engine/security/userns-remap/#user-namespace-known-limitations) mode.
+    # Also it can make docker-compose hang/freeze(maybe only in rootless mode?) because it want to port forward every port between $LIVEKIT_RTC_PORT_RANGE_START and $LIVEKIT_RTC_PORT_RANGE_END
+    #ports:
+    #  - "${LIVEKIT_BIND:-127.0.0.1}:${LIVEKIT_PORT:-7880}:${LIVEKIT_PORT:-7880}/tcp"
+    #  - "${LIVEKIT_RTC_TCP_PORT:-7881}:${LIVEKIT_RTC_TCP_PORT:-7881}/tcp"
+    #  - "${LIVEKIT_RTC_PORT_RANGE_START}-${LIVEKIT_RTC_PORT_RANGE_END}:${LIVEKIT_RTC_PORT_RANGE_START}-${LIVEKIT_RTC_PORT_RANGE_END}/udp"
+    network_mode: "host"
+    userns_mode: "host"
+    #
+    env_file:
+      - path: ../livekit/.env
+        required: true
+    environment:
+      LIVEKIT_DOMAIN: "livekit.${MAIN_DOMAIN}"
+      LIVEKIT_PORT: 7880
+      LIVEKIT_RTC_TCP_PORT: 7881
+      LIVEKIT_RTC_PORT_RANGE_START: 50000
+      LIVEKIT_RTC_PORT_RANGE_END: 50010
+      #LIVEKIT_RTC_NODE_IP_IPV4:
+      # When using "LIVEKIT_RTC_USE_EXTERNAL_IP=true" it will tries to find public ip using default stun servers defined in [here](https://github.com/livekit/mediatransportutil/blob/13d536af56d94f72e16717b5a4f2643ea5ca3476/pkg/rtcconfig/config.go#L38). you can also provide yours using `rtc.stun_servers` but [this cannot be added using environment variables](https://github.com/livekit/livekit/issues/4261)
+      LIVEKIT_RTC_USE_EXTERNAL_IP: false
+      LIVEKIT_TURN_ENABLED: true
+      LIVEKIT_TURN_DOMAIN: "livekit.${MAIN_DOMAIN}"
+      LIVEKIT_TURN_TLS_PORT: ${HTTPS_PORT}
+      LIVEKIT_TURN_UDP_PORT: 3478
+      LIVEKIT_TURN_EXTERNAL_TLS: true
+      LIVEKIT_LOGGING_LEVEL: info
+    deploy:
+      resources:
+        limits:
+          cpus: 2.0
+          memory: 2G
     #entrypoint: /bin/sh
     #command:
     #  - -c
     #  - |
-    #    go-envsubst -no-unset -no-empty -i "/etc/livekit.yaml.template" -o "/tmp/livekit.yaml"
-    #    #exec /livekit-server --config "/tmp/livekit.yaml"
+    #    #go-envsubst -no-unset -no-empty -i "/etc/livekit.yaml.template" -o "/tmp/livekit.yaml"
+    #    exec /livekit-server --config "/tmp/livekit.yaml"

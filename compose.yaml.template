@@ -4,11 +4,15 @@ include:
     # WebServer
     #- services/nginx/compose.yaml
     # Deps
+    ## IPMonitor
+    #- services/ipmonitor/compose.yaml
     ## Livekit
     #- services/livekit/compose.yaml
     #- services/livekit/nginx.compose.yaml
+    #- services/livekit/ipmonitor.compose.yaml
     ## Coturn
     #- services/coturn/compose.yaml
+    #- services/coturn/ipmonitor.compose.yaml
     ## Authentication
     ### OIDC
     #### Nostr-OIDC
@@ -46,7 +50,7 @@ include:
     #- services/zooid/nginx.compose.yaml
     # Matrix
     ## Client
-    #- services/element-web/nginx.compose.yaml
+    #- services/element-web/nginx.compose.yaml # Static webapp
     ## Server
     #- services/continuwuity/compose.yaml
     #- services/continuwuity/nginx.compose.yaml
@@ -59,7 +63,10 @@ include:
     # IPFS
     ## Kubo
     #- services/kubo/compose.yaml
+    #- services/kubo/ipmonitor.compose.yaml
     # Proxy
+    ## AutoSSH
+    - services/autossh/compose.yaml
     ## 3X-ui
     #- services/3xui/compose.yaml
     #- services/3xui/nginx.compose.yaml
@@ -85,7 +92,7 @@ include:
     ## GeoIP
     #- services/geoip/compose.yaml
     #- services/geoip/nginx.compose.yaml
-    ## VSCode Web standalone version
+    ## VSCode Web
     #- services/vscode-web-standalone/nginx.compose.yaml # Static webapp
     ## Markdown viewer/editor
     #- services/sveltemark/nginx.compose.yaml

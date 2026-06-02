@@ -1,6 +1,6 @@
 # https://github.com/mycrl/turn-rs/blob/main/Dockerfile
 services:
-  turnserver:
+  turn-rs:
     image: ${GHCR_MIRROR:-ghcr.io/mycrl}/turn-server:latest
     restart: unless-stopped
     volumes:

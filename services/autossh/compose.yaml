@@ -13,8 +13,8 @@ services:
         source: ${AUTOSSH_KNOWN_HOSTS_FILE:-../../data/autossh/known_hosts}
         target: /known_hosts
         read_only: true
-    #ports:
-    #  - "${AUTOSSH_BIND:-127.0.0.1}:${AUTOSSH_TUNNEL_PORT}:${AUTOSSH_TUNNEL_PORT}"
+    ports:
+      - "${AUTOSSH_BIND:-127.0.0.1}:${AUTOSSH_TUNNEL_PORT}:${AUTOSSH_TUNNEL_PORT}"
     environment:
       - SSH_REMOTE_USER=${AUTOSSH_REMOTE_USER:-}
       - SSH_REMOTE_HOST=${AUTOSSH_REMOTE_HOST:-}

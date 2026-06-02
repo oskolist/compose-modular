@@ -1,0 +1,8 @@
+services:
+  kubo:
+    pid: "service:ipmonitor"
+    depends_on:
+      # https://stackoverflow.com/questions/52322800/docker-compose-how-to-wait-for-other-service-to-be-ready
+      ipmonitor:
+        # Note in this case we do not get currect ip using this service(we only use it to reset service when public ip changed) so you can comment this line if you want(but if ipmonitor service is broken(for example cannot catch the getip service) it may not restart the service):
+        condition: service_healthy

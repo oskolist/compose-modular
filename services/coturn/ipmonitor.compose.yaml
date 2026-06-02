@@ -1,0 +1,16 @@
+services:
+  coturn:
+    volumes:
+      - type: bind
+        source: ../../temp/ipmonitor
+        target: /mnt/ipmonitor/temp
+        read_only: true
+        bind:
+          create_host_path: true
+    environment:
+      IPMONITOR_IS_ENABLED: true
+    pid: "service:ipmonitor"
+    depends_on:
+      # https://stackoverflow.com/questions/52322800/docker-compose-how-to-wait-for-other-service-to-be-ready
+      ipmonitor:
+        condition: service_healthy
