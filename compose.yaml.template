@@ -34,8 +34,12 @@ include:
     ## Torrent tracker
     #- services/torrust-tracker/compose.yaml
     # Chatbox
+    ## Hollama
     #- services/hollama/compose.yaml
     #- services/hollama/nginx.compose.yaml
+    ## Hermes-WebUI
+    #- services/hermes-webui/compose.yaml
+    #- services/hermes-webui/nginx.compose.yaml
     # Nostr
     ## Client
     ### Flotilla

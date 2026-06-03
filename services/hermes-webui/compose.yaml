@@ -1,0 +1,40 @@
+# https://github.com/nesquena/hermes-webui/blob/master/docs/docker.md
+# https://github.com/nesquena/hermes-webui/blob/master/docker-compose.yml
+# https://github.com/nesquena/hermes-webui/blob/master/docker-compose.two-container.yml
+# https://github.com/nesquena/hermes-webui/blob/master/docker-compose.three-container.yml
+# https://hermes-agent.nousresearch.com/docs/user-guide/docker/
+services:
+  hermes-webui:
+    image: ${GHCR_MIRRO:-ghcr.io/nesquena}/hermes-webui:latest
+    restart: unless-stopped
+    ports:
+      - "${HERMESWEBUI_BIND:-127.0.0.1}:${HERMESWEBUI_PORT:-8787}:${HERMESWEBUI_PORT:-8787}"
+    volumes:
+      - ../../data/hermes-webui/hermes:/home/hermeswebui/.hermes
+      - ../../data/hermes-webui/workspace:/workspace
+      - type: image
+        source: nousresearch/hermes-agent:latest
+        target: /home/hermeswebui/.hermes/hermes-agent
+        image:
+          subpath: opt/hermes/
+    environment:
+      HERMES_WEBUI_DEFAULT_WORKSPACE: /workspace
+      HERMES_WEBUI_STATE_DIR: /home/hermeswebui/.hermes/webui
+      HERMES_WEBUI_PASSWORD: ${HERMES_WEBUI_PASSWORD:-}
+      HERMES_SKIP_CHMOD: 1
+  #hermes-agent:
+  #  image: nousresearch/hermes-agent
+  #  command: gateway run
+  #  ports:
+  #    - "${HERMESAGENT_BIND:-127.0.0.1}:${HERMESAGENT_PORT:-8642}:8642"
+  #    - "${HERMESAGENT_DASHBOARD_BIND:-127.0.0.1}:${HERMESAGENT_DASHBOARD_PORT:-9119}:${HERMESAGENT_DASHBOARD_PORT:-9119}"
+  #  volumes:
+  #    - ../../data/hermes-agent:/opt/data
+  #  environment:
+  #    #API_SERVER_HOST: 0.0.0.0
+  #    #API_SERVER_ENABLED: ${HERMESAGENT_API_SERVER_ENABLED:-true}
+  #    #API_SERVER_KEY: ${HERMESAGENT_API_SERVER_KEY?is needed}
+  #    #API_SERVER_CORS_ORIGINS: ${HERMESAGENT_API_SERVER_CORS_ORIGINS:-*}
+  #    #HERMES_DASHBOARD: ${HERMESAGENT_DASHBOARD:-1}
+  #    #HERMES_DASHBOARD_PORT: ${HERMESAGENT_DASHBOARD_PORT:-9119}
+  #    HERMES_SKIP_CHMOD: 1

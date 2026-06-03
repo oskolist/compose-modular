@@ -1,0 +1,13 @@
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../hermes-webui/nginx.http.domain.conf
+        target: /etc/nginx/conf.d/domains/${HERMESWEBUI_DOMAIN}/hermes-webui.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    environment:
+      - HERMESWEBUI_PORT
+    depends_on:
+      - hermes-webui
