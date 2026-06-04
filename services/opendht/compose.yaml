@@ -1,0 +1,14 @@
+# https://github.com/savoirfairelinux/opendht/wiki/Running-a-node-with-dhtnode
+# https://git.jami.net/savoirfairelinux/opendht
+# https://git.jami.net/savoirfairelinux/opendht/-/tree/master/docker?ref_type=heads
+services:
+  opendht-node:
+    image: ${GHCR_MIRROR:-ghcr.io/savoirfairelinux/opendht}/opendht-alpine:latest # alpine-based image
+    restart: unless-stopped
+    #volumes:
+    #  - ../../opendht-node/
+    ports:
+      - "${OPENDHTNODE_BIND:-0.0.0.0}:${OPENDHTNODE_PORT:-4222}:${OPENDHTNODE_PORT:-4222}"
+      - "${OPENDHTNODE_PROXYSERVER_BIND:-0.0.0.0}:${OPENDHTNODE_PROXYSERVER_PORT:-8000}:${OPENDHTNODE_PROXYSERVER_PORT:-8000}"
+      - 
+    command: dhtnode ${OPENDHTNODE_INIT_BOOTSTRAP:+"-b ${OPENDHTNODE_INIT_BOOTSTRAP}"} -p ${OPENDHTNODE_PORT:-4222} -s ${OPENDHTNODE_PROXYSERVER_PORT:+"--proxyserver ${OPENDHTNODE_PROXYSERVER_PORT}" ${OPENDHTNODE_EXTRAARGS:-}
