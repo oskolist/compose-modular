@@ -1,0 +1,26 @@
+# https://github.com/simplex-chat/simplexmq#deploy-smpxftp-servers-on-linux
+# https://github.com/simplex-chat/simplexmq/tree/stable/scripts/docker
+# https://github.com/simplex-chat/simplexmq/blob/stable/Dockerfile
+# https://github.com/simplex-chat/simplexmq/blob/stable/src/Simplex/Messaging/Server/Main/Init.hs
+services:
+  smp-server:
+    image: simplexchat/smp-server:latest
+    volumes:
+      - ../../data/simplex/smp/config:/etc/opt/simplex:z
+      - ../../data/simplex/smp/logs:/var/opt/simplex:z
+    environment:
+      ADDR: ${SIMPLEX_SMBSERVER_ADDR}
+      PASS: ${SIMPLEX_SMBSERVER_PASS}
+    ports:
+      - "${SIMPLEX_SMBSERVER_BIND:-127.0.0.1}:${SIMPLEX_SMBSERVER_PORT:-5223}:5223"
+  xftp-server:
+    image: simplexchat/xftp-server:latest
+    volumes:
+      - ../../data/simplex/xftp/config:/etc/opt/simplex-xftp:z
+      - ../../data/simplex/xftp/logs:/var/opt/simplex-xftp:z
+      - ../../data/simplex/xftp/files:/srv/xftp:z
+    environment:
+      ADDR: ${SIMPLEX_XFTPSERVER_ADDR}
+      QUOTA: ${SIMPLEX_XFTPSERVER_QUOTA}
+    ports:
+      - "${SIMPLEX_XFTPSERVER_BIND:-127.0.0.1}:${SIMPLEX_XFTPSERVER_PORT:-443}:443"
