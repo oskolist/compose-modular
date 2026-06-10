@@ -1,0 +1,9 @@
+services:
+  screego:
+    #ports: !reset
+    #  - "${SCREEGO_BIND:-127.0.0.1}:${SCREEGO_PORT:-5050}:${SCREEGO_PORT:-5050}"
+    environment:
+      SCREEGO_EXTERNAL_IP: !reset null
+      SCREEGO_TURN_EXTERNAL_IP: "dns:${COTURN_DOMAIN}"
+      SCREEGO_TURN_EXTERNAL_PORT: ${COTURN_PORT:-3478}
+      SCREEGO_TURN_EXTERNAL_SECRET: "${COTURN_STATIC_AUTH_SECRET}"

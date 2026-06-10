@@ -1,0 +1,19 @@
+# https://screego.net/#/proxy?id=nginx
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../screego/nginx.http.domain.conf
+        target: /etc/nginx/conf.d/domains/${SCREEGO_DOMAIN}/screego.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    environment:
+      - SCREEGO_PORT=${SCREEGO_PORT:-5050}
+    depends_on:
+      - screego
+  screego:
+    network_mode: !reset null
+    userns_mode: !reset null
+    environment:
+      SCREEGO_TRUST_PROXY_HEADERS: true

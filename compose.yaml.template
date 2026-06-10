@@ -93,6 +93,10 @@ include:
     #- services/forgejo/compose.yaml
     #- services/forgejo/nginx.compose.yaml
     # Tools
+    ## Screego
+    #- services/screego/compose.yaml
+    #- services/screego/coturn.compose.yaml
+    #- services/screego/nginx.compose.yaml
     ## GeoIP
     #- services/geoip/compose.yaml
     #- services/geoip/nginx.compose.yaml

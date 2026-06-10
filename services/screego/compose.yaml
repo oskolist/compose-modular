@@ -1,0 +1,37 @@
+# https://github.com/screego/server/blob/master/Dockerfile
+# https://screego.net/#/config
+# https://github.com/screego/server/blob/master/ui/src/useConfig.ts
+services:
+  screego:
+    image: ghcr.io/screego/server:${SCREEGO_IMAGETAG:-unstable}
+    volumes:
+      - type: image
+        source: library/busybox:stable-musl
+        target: /bin/busybox
+        image:
+          subpath: bin/busybox
+    # (Did not check myself!) but seems UDP port forwarding on docker is not very reliable/stable. so instead i commented these and added `network_mode: host`(`userns_mode: "host"` is required in [userns-remap](https://docs.docker.com/engine/security/userns-remap/#user-namespace-known-limitations) mode.
+    # Also it can make docker-compose hang/freeze(maybe only in rootless mode?) because it want to port forward every port between $SCREEGO_TURN_PORT_MIN and $SCREEGO_TURN_PORT_MAX
+    ports:
+      - "${SCREEGO_BIND:-127.0.0.1}:${SCREEGO_PORT:-5050}:${SCREEGO_PORT:-5050}"
+    #  - "${SCREEGO_TURN_BIND:-0.0.0.0}:${SCREEGO_TURN_PORT:-3478}:${SCREEGO_TURN_PORT:-3478}"
+    #  - "${SCREEGO_TURN_BIND:-0.0.0.0}:${SCREEGO_TURN_PORT:-3478}:${SCREEGO_TURN_PORT:-3478}/udp"
+    #  - "${SCREEGO_TURN_BIND:-0.0.0.0}:${SCREEGO_TURN_PORT_MIN:-49152}-${SCREEGO_TURN_PORT_MAX:-65535}:${SCREEGO_TURN_PORT_MIN:-49152}-${SCREEGO_TURN_PORT_MAX:-65535}/udp"
+    network_mode: "host"
+    userns_mode: "host"
+    #
+    env_file:
+      - path: ../screego/.env
+        required: true
+    environment:
+      SCREEGO_TURN_PORT_RANGE: "${SCREEGO_TURN_PORT_RANGE:-${SCREEGO_TURN_PORT_MIN:-49152}:${SCREEGO_TURN_PORT_MAX:-65535}}"
+    entrypoint: /bin/busybox
+    command:
+      - sh
+      - -c
+      - |
+        # Remove empty environment variables
+        for var in $$(busybox env | busybox grep '^SCREEGO_' | busybox cut -d= -f1); do
+          busybox test -z "$(eval echo -n "\$$$$var")" && unset "$$var"
+        done
+        exec /screego serve
