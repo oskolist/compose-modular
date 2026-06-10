@@ -5,4 +5,4 @@
 stable
 
 # TODO
-add a entrypoint to check if DUFS_DOMAIN is equial to MAIN_DOMAIN. and if it is then configure dufs under subpath in nginx configuration
+- add a entrypoint to check if `DUFS_DOMAIN` is equal to `MAIN_DOMAIN`. and if it is then configure dufs under subpath in nginx configuration

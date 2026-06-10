@@ -24,7 +24,8 @@ services:
       #- ../continuwuity/continuwuity-resolv.conf:/etc/resolv.conf
       #- ../continuwuity/config.toml:/etc/continuwuity.toml
     env_file:
-      ../continuwuity/.env
+      - path: ../continuwuity/.env
+        required: true
     environment:
       CONTINUWUITY_DATABASE_PATH: /var/lib/continuwuity
       # note: only one of the `CONTINUWUITY_ADDRESS` and `CONTINUWUITY_UNIX_SOCKET_PATH` should be set otherwise you get 'TOML keys "address" and "unix_socket_path" were both defined.' error.

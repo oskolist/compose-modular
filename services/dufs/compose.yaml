@@ -16,8 +16,9 @@ services:
         image:
           subpath: bin/busybox
     ports:
-      - ${DUFS_PORT}:5000
+      - "${DUFS_BIND:-127.0.0.1}:${DUFS_PORT:-5000}:${DUFS_PORT:-5000}"
     environment:
+      - DUFS_PORT=${DUFS_PORT:-5000}
       - DUFS_PATH_PREFIX=${DUFS_PATH_PREFIX}
       - DUFS_HIDDEN=${DUFS_HIDDEN}
       - DUFS_AUTH=${DUFS_AUTH}
