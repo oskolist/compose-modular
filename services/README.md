@@ -1,0 +1,18 @@
+# TODO
+- add postgres serivce with multiple database support
+- add ntfy service
+- add penpot service
+- - check how to use coturn for screego instead of screego internal turn server
+- fix opendht service
+- fix simplex service
+- add [opengist](https://github.com/thomiceli/opengist) service
+- add [pocket-id](https://github.com/pocket-id/pocket-id) service
+- check if we can self-host jami web version -> https://git.jami.net/savoirfairelinux/jami-web
+- add jitsi service using https://github.com/jitsi/docker-jitsi-meet
+- mirror docs:
+- - https://github.com/ipfs/ipfs-docs
+- - https://github.com/docker/docs
+- - https://github.com/docker-library/docs
+- - https://matrix-construct.github.io/tuwunel/print.html
+- - https://github.com/continuwuity/continuwuity/tree/main/docs
+- - https://github.com/screego/server/tree/master/docs
