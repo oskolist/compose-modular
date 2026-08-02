@@ -3,14 +3,14 @@ services:
   nginx:
     volumes:
       - type: bind
-        source: ../ergo/nginx.obsidianirc.location.conf
-        target: /etc/nginx/conf.d/obsidianirc.d/location.d/ergo.conf.template
+        source: ../ergo/nginx.obby.location.conf
+        target: /etc/nginx/conf.d/obby.d/location.d/ergo.conf.template
         read_only: true
         bind:
           create_host_path: false
       - type: bind
-        source: ../ergo/nginx.obsidianirc.server.json
-        target: /etc/obsidianirc/servers.d/ergo.json.template
+        source: ../ergo/nginx.obby.server.json
+        target: /etc/obby/servers.d/ergo.json.template
         read_only: true
         bind:
           create_host_path: false
