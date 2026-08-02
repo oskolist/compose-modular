@@ -1,0 +1,27 @@
+# https://github.com/pocket-id/pocket-id/blob/main/docker-compose.yml
+# https://github.com/pocket-id/pocket-id/blob/main/docker/Dockerfile
+# https://github.com/pocket-id/pocket-id/blob/main/docker/Dockerfile-distroless
+# https://github.com/pocket-id/pocket-id/blob/main/docker/Dockerfile-prebuilt
+services:
+  pocket-id:
+    image: ${GHCR_MIRROR:-ghcr.io/pocket-id}/pocket-id:v2 # alpine-based image
+    #image: ${GHCR_MIRROR:-ghcr.io/pocket-id}/pocket-id:v2-distroless # distroless-based image
+    restart: unless-stopped
+    ports:
+      - "${POCKETID_BIND:-127.0.0.1}:${POCKETID_PORT:-1411}:${POCKETID_PORT:-1411}"
+    volumes:
+      - "../../data/pocket-id:/app/data"
+    environment:
+      PORT: ${POCKETID_PORT:-1411}
+      PUID: ${POCKETID_PUID:-1000}
+      PGID: ${POCKETID_PGID:-1000}
+      ENCRYPTION_KEY: ${POCKETID_ENCRYPTION_KEY}
+      TRUST_PROXY: ${POCKETID_TRUST_PROXY:-false}
+      MAXMIND_LICENSE_KEY: ${POCKETID_MAXMIND_LICENSE_KEY}
+    # Optional healthcheck
+    healthcheck:
+      test: [ "CMD", "/app/pocket-id", "healthcheck" ]
+      interval: 1m30s
+      timeout: 5s
+      retries: 2
+      start_period: 10s

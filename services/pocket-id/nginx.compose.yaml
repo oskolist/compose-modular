@@ -1,0 +1,17 @@
+# https://pocket-id.org/docs/configuration/environment-variables#reverse-proxy-settings
+# https://pocket-id.org/docs/advanced/nginx-reverse-proxy
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../pocket-id/nginx.http.domain.conf
+        target: /etc/nginx/conf.d/domains/${POCKETID_DOMAIN}/pocket-id.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    environment:
+      - POCKETID_PORT=${POCKETID_PORT:-1411}
+  pocket-id:
+    environment:
+      TRUST_PROXY: ${POCKETID_TRUST_PROXY:-true}
+      TRUSTED_PLATFORM: ${POCKETID_TRUST_PROXY:-X-Real-IP}

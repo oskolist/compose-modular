@@ -1,0 +1,15 @@
+services:
+  opencode:
+    image: ghcr.io/anomalyco/opencode:latest
+    restart: unless-stopped
+    env_file:
+      ../opencode/.env
+    #environment:
+    #  - IPFS_PATH=/data/ipfs
+    volumes:
+      - type: bind
+        source: ../kubo/container-startup.sh
+        target: /container-init.d/001-container-startup.sh
+        read_only: true
+        bind:
+          create_host_path: false

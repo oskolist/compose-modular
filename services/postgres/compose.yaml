@@ -1,0 +1,20 @@
+# https://github.com/docker-library/postgres/pull/496
+# https://github.com/docker-library/postgres/blob/master/docker-ensure-initdb.sh
+# https://github.com/docker-library/docs/tree/master/postgres
+# https://github.com/docker-library/postgres/issues/151
+services:
+  postgres:
+    image: postgres:18
+    shm_size: 128mb
+    volumes:
+      - ../../data/postgres:/var/lib/postgresql
+      - type: bind
+        source: ../postgres/entrypoint.sh
+        target: /custom-entrypoint.sh
+        read_only: true
+        bind:
+          create_host_path: false
+    env_file:
+      - path: ../postgres/.env
+        required: true
+    command: custom-entrypoint.sh

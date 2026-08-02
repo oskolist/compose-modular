@@ -9,6 +9,8 @@
 - add [pocket-id](https://github.com/pocket-id/pocket-id) service
 - check if we can self-host jami web version -> https://git.jami.net/savoirfairelinux/jami-web
 - add jitsi service using https://github.com/jitsi/docker-jitsi-meet
+- maybe add [guacamole](https://hub.docker.com/r/guacamole/guacamole/) service(needs postgres or mysql)
+- maybe add [punchcard](https://github.com/pinpox/punchcard)?
 - mirror docs:
 - - https://github.com/ipfs/ipfs-docs
 - - https://github.com/docker/docs
@@ -16,3 +18,4 @@
 - - https://matrix-construct.github.io/tuwunel/print.html
 - - https://github.com/continuwuity/continuwuity/tree/main/docs
 - - https://github.com/screego/server/tree/master/docs
+- - https://github.com/NixOS/nix.dev
