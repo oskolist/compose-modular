@@ -1,0 +1,32 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: ["config:recommended"],
+
+  customManagers: [
+    {
+      customType: "regex",
+
+      // which files to scan (a regex wrapped in slashes)
+      managerFilePatterns: ["/(^|/)images\\.env$/"],
+
+      // one match = one image (3 consecutive lines: SRC, TAG, DIGEST)
+      matchStrings: [
+        "\\w+_IMAGE_SRC=(?<depName>\\S+)\\s+\\w+_IMAGE_TAG=(?<currentValue>\\S+)\\s+\\w+_IMAGE_DIGEST=@(?<currentDigest>sha256:[a-f0-9]{64})",
+        // "\\w+_IMAGE_SRC=(?<depName>\\S+)\\s*[\\r\\n]+\\w+_IMAGE_TAG=(?<currentValue>\\S+)\\s*[\\r\\n]+\\w+_IMAGE_DIGEST=@(?<currentDigest>sha256:[a-f0-9]{64})",
+      ],
+
+      // where to look up new versions
+      datasourceTemplate: "docker",
+      versioningTemplate: "docker",
+    },
+  ],
+
+  packageRules: [
+    {
+      // optional: auto-merge digest-only bumps
+      matchManagers: ["custom.regex"],
+      matchUpdateTypes: ["digest"],
+      automerge: true,
+    },
+  ],
+}

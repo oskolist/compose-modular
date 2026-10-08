@@ -4,6 +4,7 @@
 /.env.base
 /compose.yaml
 *.env
+!/images.env
 *.secret
 *.secret.*
 *.bak

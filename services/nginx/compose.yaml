@@ -1,6 +1,6 @@
 services:
   nginx:
-    image: nginx
+    image: ${NGINX_IMAGE_SRC:-nginx}:${NGINX_IMAGE_TAG:-stable-alpine}${NGINX_IMAGE_DIGEST:-}
     #container_name: nginx
     secrets:
       - source: ssl_certificate
