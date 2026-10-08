@@ -3,6 +3,12 @@ on:
   schedule:
     - cron: "0 5 * * *"
   workflow_dispatch:
+    inputs:
+      debug:
+        description: Enable Renovate debug logging
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   renovate:
@@ -15,5 +21,6 @@ jobs:
       - uses: renovatebot/github-action@v46.3.7
         env:
           RENOVATE_REPOSITORIES: ${{ github.repository }}
+          LOG_LEVEL: ${{ inputs.debug && 'debug' || 'info' }}
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
