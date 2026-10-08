@@ -1,4 +1,4 @@
-FROM debian:bookworm AS builder
+FROM debian:trixie AS builder
 COPY 
 FROM debian:bookworm-slim
 COPY /opt/turn-server /usr/local/bin/turn-server
