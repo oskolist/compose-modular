@@ -3,7 +3,7 @@
 # https://git.jami.net/savoirfairelinux/opendht/-/tree/master/docker?ref_type=heads
 services:
   opendht-node:
-    image: ${GHCR_MIRROR:-ghcr.io/savoirfairelinux/opendht}/opendht-alpine:latest # alpine-based image
+    image: ${OPENDHT_IMAGE_SRC:-ghcr.io/savoirfairelinux/opendht/opendht-alpine}:${OPENDHT_IMAGE_TAG:-latest}${OPENDHT_IMAGE_DIGEST:-} # alpine-based image
     restart: unless-stopped
     #volumes:
     #  - ../../opendht-node/

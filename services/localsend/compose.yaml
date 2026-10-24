@@ -1,7 +1,7 @@
 # https://github.com/localsend/localsend/blob/main/server/Dockerfile
 services:
   localsend:
-    image: ${GHCR_MIRROR:-ghcr.io/oskolist}/localsend-signaling-server:latest # debianbookwormslim-based image
+    image: ${LOCALESEND_IMAGE_SRC:-ghcr.io/oskolist/localsend-signaling-server}:${LOCALESEND_IMAGE_TAG:-latest}${LOCALESEND_IMAGE_DIGEST:-} # debianbookwormslim-based image
     #container_name: localsend
     restart: unless-stopped
     environment:

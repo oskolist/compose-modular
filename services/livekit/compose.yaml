@@ -3,7 +3,7 @@ services:
   livekit:
     #user: "${UID:-1000}:${GID:-1000}"
     user: "nobody:nogroup"
-    image: livekit/livekit-server:latest
+    image: ${LIVEKIT_IMAGE_SRC:-livekit/livekit-server}:${LIVEKIT_IMAGE_TAG:-latest}${LIVEKIT_IMAGE_DIGEST:-}
     restart: unless-stopped
     #volumes:
     #  - type: image

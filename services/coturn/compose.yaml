@@ -11,7 +11,7 @@
 
 services:
   coturn:
-    image: "coturn/coturn:latest" # debian-based image
+    image: ${COTURN_IMAGE_SRC:-coturn/coturn}:${COTURN_IMAGE_TAG:-latest}${COTURN_IMAGE_DIGEST:-} # debian-based image
     restart: unless-stopped
     secrets: # TODO: check correct uid and gid
       - source: ssl_certificate

@@ -1,6 +1,6 @@
 services:
   hollama:
-    image: ${GHCR_MIRROR:-ghcr.io/fmaclen}/hollama:latest
+    image: ${HOLLAMA_IMAGE_SRC:-ghcr.io/fmaclen/hollama}:${HOLLAMA_IMAGE_TAG:-latest}${HOLLAMA_IMAGE_DIGEST:-}
     #container_name: hollama
     restart: unless-stopped
     ports:

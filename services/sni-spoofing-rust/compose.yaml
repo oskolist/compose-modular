@@ -1,6 +1,6 @@
 services:
   sni-spoofing-rust:
-    image: ${GHCR_MIRROR:-ghcr.io/therealaleph}/sni-spoofing-rust:main
+    image: ${SNISPOOFINGRUST_IMAGE_SRC:-ghcr.io/therealaleph/sni-spoofing-rust}:${SNISPOOFINGRUST_IMAGE_TAG:-main}${SNISPOOFINGRUST_IMAGE_DIGEST:-}
     #container_name: sni-spoofing-rust
     restart: unless-stopped
     #network_mode: "service:fortivpn-to-socks5"

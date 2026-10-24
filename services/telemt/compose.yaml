@@ -1,6 +1,6 @@
 services:
   telemt:
-    image: ${GHCR_MIRROR:-ghcr.io/telemt}/telemt:latest
+    image: ${TELEMT_IMAGE_SRC:-ghcr.io/telemt/telemt}:${TELEMT_IMAGE_TAG:-latest}${TELEMT_IMAGE_DIGEST:-}
     ports:
       - "${TELEMT_BIND:-127.0.0.1}:${TELEMT_PORT:-8443}:${TELEMT_PORT:-8443}"
       - "${TELEMT_API_BIND:-127.0.0.1}:${TELEMT_API_PORT:-9091}:${TELEMT_API_PORT:-9091}"

@@ -5,7 +5,7 @@
 # https://hermes-agent.nousresearch.com/docs/user-guide/docker/
 services:
   hermes-webui:
-    image: ${GHCR_MIRRO:-ghcr.io/nesquena}/hermes-webui:latest
+    image: ${HERMESWEBUI_IMAGE_SRC:-ghcr.io/nesquena/hermes-webui}:${HERMESWEBUI_IMAGE_TAG:-latest}${HERMESWEBUI_IMAGE_DIGEST:-}
     restart: unless-stopped
     ports:
       - "${HERMESWEBUI_BIND:-127.0.0.1}:${HERMESWEBUI_PORT:-8787}:${HERMESWEBUI_PORT:-8787}"

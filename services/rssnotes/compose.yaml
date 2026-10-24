@@ -1,7 +1,7 @@
 # https://github.com/trinidz/rssnotes/blob/main/sample.docker-compose.yml
 services:
   rssnotes:
-    image: ${GHCR_MIRROR:-ghcr.io/trinidz}/rssnotes:latest
+    image: ${RSSNOTES_IMAGE_SRC:-ghcr.io/trinidz/rssnotes}:${RSSNOTES_IMAGE_TAG:-latest}${RSSNOTES_IMAGE_DIGEST:-}
     volumes:
       - "../../data/rssnotes/.env:/.env"
       - "../../data/rssnotes/db:/app/db"

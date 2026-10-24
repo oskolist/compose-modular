@@ -1,7 +1,7 @@
 # https://github.com/mycrl/turn-rs/blob/main/Dockerfile
 services:
   turn-rs:
-    image: ${GHCR_MIRROR:-ghcr.io/mycrl}/turn-server:latest
+    image: ${TURNRS_IMAGE_SRC:-ghcr.io/mycrl/turn-server}:${TURNRS_IMAGE_TAG:-latest}${TURNRS_IMAGE_DIGEST:-}
     restart: unless-stopped
     volumes:
       - ./turnserver.conf:/etc/coturn/turnserver.conf

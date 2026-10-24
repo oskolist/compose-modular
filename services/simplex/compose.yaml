@@ -4,7 +4,7 @@
 # https://github.com/simplex-chat/simplexmq/blob/stable/src/Simplex/Messaging/Server/Main/Init.hs
 services:
   smp-server:
-    image: simplexchat/smp-server:latest
+    image: ${SIMPLEX_SMP_IMAGE_SRC:-simplexchat/smp-server}:${SIMPLEX_SMP_IMAGE_TAG:-latest}${SIMPLEX_SMP_IMAGE_DIGEST:-}
     volumes:
       - ../../data/simplex/smp/config:/etc/opt/simplex:z
       - ../../data/simplex/smp/logs:/var/opt/simplex:z
@@ -14,7 +14,7 @@ services:
     ports:
       - "${SIMPLEX_SMBSERVER_BIND:-127.0.0.1}:${SIMPLEX_SMBSERVER_PORT:-5223}:5223"
   xftp-server:
-    image: simplexchat/xftp-server:latest
+    image: ${SIMPLEX_XFTP_IMAGE_SRC:-simplexchat/xftp-server}:${SIMPLEX_XFTP_IMAGE_TAG:-latest}${SIMPLEX_XFTP_IMAGE_DIGEST:-}
     volumes:
       - ../../data/simplex/xftp/config:/etc/opt/simplex-xftp:z
       - ../../data/simplex/xftp/logs:/var/opt/simplex-xftp:z

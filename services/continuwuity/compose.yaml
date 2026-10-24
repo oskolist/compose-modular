@@ -8,7 +8,7 @@
 services:
   continuwuity:
     #image: "forgejo.ellis.link/continuwuation/continuwuity:latest"
-    image: jadedblueeyes/continuwuity:latest
+    image: ${CONTINUWUITY_IMAGE_SRC:-jadedblueeyes/continuwuity}:${CONTINUWUITY_IMAGE_TAG:-latest}${CONTINUWUITY_IMAGE_DIGEST:-}
     restart: unless-stopped
     command: /sbin/conduwuit
     #ports:

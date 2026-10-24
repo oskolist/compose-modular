@@ -1,7 +1,7 @@
 # https://docs.netbird.io/get-started/install/docker
 services:
   netbird:
-    image: netbirdio/netbird:latest
+    image: ${NETBIRD_IMAGE_SRC:-netbirdio/netbird}:${NETBIRD_IMAGE_TAG:-latest}${NETBIRD_IMAGE_DIGEST:-}
     #container_name: netbird-client
     #hostname: <HOSTNAME>
     cap_add:

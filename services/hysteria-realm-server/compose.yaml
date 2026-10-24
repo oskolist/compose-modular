@@ -1,7 +1,7 @@
 # https://github.com/apernet/hysteria-realm-server/blob/master/Dockerfile
 services:
   hysteria-realm-server:
-    image: ${GHCR_MIRROR:-ghcr.io/apernet}/hysteria-realm-server:latest # scratch-based image
+    image: ${HYSTERIAREALMSERVER_IMAGE_SRC:-ghcr.io/apernet/hysteria-realm-server}:${HYSTERIAREALMSERVER_IMAGE_TAG:-latest}${HYSTERIAREALMSERVER_IMAGE_DIGEST:-} # scratch-based image
     #image: ${GHCR_MIRROR:-ghcr.io/duoyang283-lab}/hysteria-realm-server:latest # scratch-based image
     #container_name: hysteria-realm-server
     restart: unless-stopped

@@ -2,7 +2,7 @@
 services:
   3xui:
     #image: docker.io/bigbugcc/3x-ui:latest
-    image: ${GHCR_MIRROR:-ghcr.io/mhsanaei}/3x-ui:latest
+    image: ${XUI_IMAGE_SRC:-ghcr.io/mhsanaei/3x-ui}:${XUI_IMAGE_TAG:-latest}${XUI_IMAGE_DIGEST:-}
     #container_name: 3xui
     restart: unless-stopped
     extra_hosts:

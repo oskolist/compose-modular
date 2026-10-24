@@ -5,7 +5,7 @@
 
 services:
   gitea-mirror:
-    image: ${GHCR_MIRROR:-ghcr.io/raylabshq}/gitea-mirror:latest
+    image: ${GITEAMIRROR_IMAGE_SRC:-ghcr.io/raylabshq/gitea-mirror}:${GITEAMIRROR_IMAGE_TAG:-latest}${GITEAMIRROR_IMAGE_DIGEST:-}
     #container_name: gitea-mirror
     restart: unless-stopped
     ports:

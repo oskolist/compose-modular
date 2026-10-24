@@ -13,6 +13,8 @@ include:
     ## Coturn
     #- services/coturn/compose.yaml
     #- services/coturn/ipmonitor.compose.yaml
+    ## Turn-rs
+    #- services/turn-rs/compose.yaml
     ## Authentication
     ### OIDC
     #### Nostr-OIDC
@@ -40,6 +42,8 @@ include:
     ## Hermes-WebUI
     #- services/hermes-webui/compose.yaml
     #- services/hermes-webui/nginx.compose.yaml
+    ## Simplex
+    #- services/simplex/compose.yaml
     # Nostr
     ## Client
     ### Flotilla
@@ -60,7 +64,7 @@ include:
     #- services/continuwuity/nginx.compose.yaml
     # IRC
     ## Client
-    #- services/obsidianirc/nginx.compose.yaml # Static webapp
+    #- services/obby/nginx.compose.yaml # Static webapp
     ## Server
     #- services/ergo/compose.yaml
     #- services/ergo/nginx.compose.yaml
@@ -68,6 +72,8 @@ include:
     ## Kubo
     #- services/kubo/compose.yaml
     #- services/kubo/ipmonitor.compose.yaml
+    ## OpenDHT
+    #- services/opendht/compose.yaml
     # Proxy
     ## AutoSSH
     - services/autossh/compose.yaml
@@ -88,10 +94,16 @@ include:
     #- services/fortivpn-to-socks5/compose.yaml
     ## SNI Spooing rust
     #- services/sni-spoofing-rust/compose.yaml
+    ## Netbird
+    #- services/netbird/compose.yaml
+    ## Hysteria
+    #- services/hysteria-realm-server/compose.yaml
     # Git Server
     ## Forgejo
     #- services/forgejo/compose.yaml
     #- services/forgejo/nginx.compose.yaml
+    ## Gitea Mirror
+    #- services/gitea-mirror/compose.yaml
     # Tools
     ## Screego
     #- services/screego/compose.yaml
@@ -105,3 +117,5 @@ include:
     ## Markdown viewer/editor
     #- services/sveltemark/nginx.compose.yaml
     #- services/maarkdown-viewer/nginx.compose.yaml # Static webapp
+    ## RSS Notes
+    #- services/rssnotes/compose.yaml

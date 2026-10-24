@@ -12,7 +12,7 @@
 services:
   ergo:
     init: true
-    image: ${GHCR_MIRROR:-ghcr.io/ergochat}/ergo:stable
+    image: ${ERGO_IMAGE_SRC:-ghcr.io/ergochat/ergo}:${ERGO_IMAGE_TAG:-stable}${ERGO_IMAGE_DIGEST:-}
     ports:
       #- "${ERGO_BIND:-127.0.0.1}${ERGO_PORT:-6667}:${ERGO_PORT:-6667}/tcp"
       - "${ERGO_SSL_BIND:-0.0.0.0}:${ERGO_SSL_PORT:-6697}:${ERGO_SSL_PORT:-6697}/tcp"

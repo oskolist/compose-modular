@@ -3,7 +3,7 @@
 services:
   kubo:
     #image: ipfs/kubo:release
-    image: ipfs/kubo:master-latest
+    image: ${KUBO_IMAGE_SRC:-ipfs/kubo}:${KUBO_IMAGE_TAG:-master-latest}${KUBO_IMAGE_DIGEST:-}
     #container_name: kubo
     restart: unless-stopped
     # (Did not check myself!) but seems UDP port forwarding on docker is not very reliable/stable. so instead i commented these and added `network_mode: host`(`userns_mode: "host"` is required in [userns-remap](https://docs.docker.com/engine/security/userns-remap/#user-namespace-known-limitations) mode:

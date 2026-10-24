@@ -1,7 +1,7 @@
 services:
   nostr-oidc:
     #image: ${GHCR_MIRROR:-ghcr.io/lescuer97}/nostr-oidc:latest
-    image: ${GHCR_MIRROR:-ghcr.io/oskolist}/nostr-oidc:latest
+    image: ${NOSTROIDC_IMAGE_SRC:-ghcr.io/oskolist/nostr-oidc}:${NOSTROIDC_IMAGE_TAG:-latest}${NOSTROIDC_IMAGE_DIGEST:-}
     restart: unless-stopped
     volumes:
       - ../../data/nostr-oidc:/app/data

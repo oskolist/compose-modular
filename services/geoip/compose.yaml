@@ -4,7 +4,7 @@
 services:
   geoip:
     #image: ${GHCR_MIRROR:-ghcr.io/lrstanley}/geoip:latest
-    image: ${GHCR_MIRROR:-ghcr.io/oskolist}/geoip:latest
+    image: ${GEOIP_IMAGE_SRC:-ghcr.io/oskolist/geoip}:${GEOIP_IMAGE_TAG:-latest}${GEOIP_IMAGE_DIGEST:-}
     #container_name: geoip
     restart: unless-stopped
     volumes:

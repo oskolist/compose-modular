@@ -7,7 +7,7 @@
 name: torrust
 services:
   tracker:
-    image: torrust/tracker:develop
+    image: ${TORRUSTTRACKER_IMAGE_SRC:-torrust/tracker}:${TORRUSTTRACKER_IMAGE_TAG:-develop}${TORRUSTTRACKER_IMAGE_DIGEST:-}
     tty: true
     ports:
       - "${TORRUST_TRACKER_UDPTRACKER_BIND}:${TORRUST_TRACKER_UDPTRACKER_BIND:-6969}:${TORRUST_TRACKER_UDPTRACKER_BIND:-6969}/udp"

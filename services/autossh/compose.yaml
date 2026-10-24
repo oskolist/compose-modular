@@ -1,7 +1,7 @@
 # https://github.com/jnovack/autossh
 services:
   autossh:
-    image: jnovack/autossh:latest
+    image: ${AUTOSSH_IMAGE_SRC:-jnovack/autossh}:${AUTOSSH_IMAGE_TAG:-latest}${AUTOSSH_IMAGE_DIGEST:-}
     #container_name: autossh
     restart: unless-stopped
     volumes:

@@ -3,7 +3,7 @@
 
 services:
   microbin:
-    image: danielszabo99/microbin:latest
+    image: ${MICROBIN_IMAGE_SRC:-danielszabo99/microbin}:${MICROBIN_IMAGE_TAG:-latest}${MICROBIN_IMAGE_DIGEST:-}
     restart: unless-stopped
     ports:
       - "${MICROBIN_BIND:-127.0.0.1}:${MICROBIN_PORT:-8001}:${MICROBIN_PORT:-8001}"

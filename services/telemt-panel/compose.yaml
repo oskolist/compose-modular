@@ -1,7 +1,7 @@
 # https://github.com/amirotin/telemt_panel/blob/main/docker-compose.yml
 services:
   telemt-panel:
-    image: ${GHCR_MIRROR:-ghcr.io/amirotin}/telemt_panel:latest
+    image: ${TELEMTPANEL_IMAGE_SRC:-ghcr.io/amirotin/telemt_panel}:${TELEMTPANEL_IMAGE_TAG:-latest}${TELEMTPANEL_IMAGE_DIGEST:-}
     #container_name: telemtpanel
     restart: unless-stopped
     volumes:

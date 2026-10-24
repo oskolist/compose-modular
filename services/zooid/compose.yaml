@@ -1,6 +1,6 @@
 services:
   zooid:
-    image: ${GHCR_MIRROR:-ghcr.io/coracle-social}/zooid:latest # Alpine-based
+    image: ${ZOOID_IMAGE_SRC:-ghcr.io/coracle-social/zooid}:${ZOOID_IMAGE_TAG:-latest}${ZOOID_IMAGE_DIGEST:-} # Alpine-based
     restart: unless-stopped
     volumes:
       - ../../data/zooid:/app:rw

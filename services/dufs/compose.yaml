@@ -1,6 +1,6 @@
 services:
   dufs:
-    image: sigoden/dufs
+    image: ${DUFS_IMAGE_SRC:-sigoden/dufs}:${DUFS_IMAGE_TAG:-latest}${DUFS_IMAGE_DIGEST:-}
     volumes:
       - type: bind
         source: ../../data/dufs

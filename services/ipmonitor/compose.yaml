@@ -1,6 +1,6 @@
 services:
   ipmonitor:
-    image: "alpine:latest"
+    image: ${IPMONITOR_IMAGE_SRC:-alpine}:${IPMONITOR_IMAGE_TAG:-latest}${IPMONITOR_IMAGE_DIGEST:-}
     restart: unless-stopped # TODO: maybe use "always"?
     volumes:
       - type: bind
