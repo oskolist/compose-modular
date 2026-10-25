@@ -3,7 +3,7 @@ services:
   nginx:
     volumes:
       - type: image
-        source: ${GHCR_MIRROR:-ghcr.io/aleerezaa}/jumble:master
+        source: ${JUMBLE_IMAGE_SRC:-ghcr.io/aleerezaa/jumble}:${JUMBLE_IMAGE_TAG:-master}${JUMBLE_IMAGE_DIGEST:-}
         target: /srv/http/Jumble
         image:
           subpath: usr/share/nginx/html/

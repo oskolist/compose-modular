@@ -3,7 +3,7 @@ services:
   nginx:
     volumes:
       - type: image
-        source: ${GHCR_MIRROR:-ghcr.io/coracle-social}/flotilla:latest
+        source: ${FLOTILLA_IMAGE_SRC:-ghcr.io/coracle-social/flotilla}:${FLOTILLA_IMAGE_TAG:-latest}${FLOTILLA_IMAGE_DIGEST:-}
         target: ${FLOTILLA_ROOT:-/srv/http/flotilla}.unpatched
         image:
           subpath: app/build/

@@ -13,7 +13,7 @@ services:
       - ../../data/hermes-webui/hermes:/home/hermeswebui/.hermes
       - ../../data/hermes-webui/workspace:/workspace
       - type: image
-        source: nousresearch/hermes-agent:latest
+        source: ${HERMESAGENT_IMAGE_SRC:-nousresearch/hermes-agent}:${HERMESAGENT_IMAGE_TAG:-latest}${HERMESAGENT_IMAGE_DIGEST:-}
         target: /home/hermeswebui/.hermes/hermes-agent
         image:
           subpath: opt/hermes/

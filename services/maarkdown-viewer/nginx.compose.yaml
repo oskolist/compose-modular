@@ -2,7 +2,7 @@ services:
   nginx:
     volumes:
       - type: image
-        source: ${GHCR_MIRROR:-ghcr.io/oskolist}/maarkdown-viewer-image:latest
+        source: ${MAARKDOWNVIEWER_IMAGE_SRC:-ghcr.io/oskolist/maarkdown-viewer-image}:${MAARKDOWNVIEWER_IMAGE_TAG:-latest}${MAARKDOWNVIEWER_IMAGE_DIGEST:-}
         target: ${MAARKDOWNVIEWER_ROOT:-/srv/http/maarkdown-viewer}
         image:
           subpath: usr/share/nginx/html/

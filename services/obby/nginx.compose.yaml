@@ -3,7 +3,7 @@ services:
   nginx:
     volumes:
       - type: image
-        source: obbyworld/obby:latest
+        source: ${OBBY_IMAGE_SRC:-obbyworld/obby}:${OBBY_IMAGE_TAG:-latest}${OBBY_IMAGE_DIGEST:-}
         target: ${OBBY_ROOT:-/srv/http/Obby}.unpatched
         image:
           subpath: usr/share/nginx/html/

@@ -11,7 +11,7 @@ services:
         target: /data
         read_only: false
       - type: image
-        source: library/busybox:stable-musl
+        source: ${BUSYBOX_IMAGE_SRC:-library/busybox}:${BUSYBOX_IMAGE_TAG:-stable-musl}${BUSYBOX_IMAGE_DIGEST:-}
         target: /bin/busybox
         image:
           subpath: bin/busybox

@@ -4,7 +4,7 @@ services:
   nginx:
     volumes:
       - type: image
-        source: ${GHCR_MIRROR:-ghcr.io/oskolist}/sveltemark:latest
+        source: ${SVELTEMARK_IMAGE_SRC:-ghcr.io/oskolist/sveltemark}:${SVELTEMARK_IMAGE_TAG:-latest}${SVELTEMARK_IMAGE_DIGEST:-}
         target: ${SVELTEMARK_ROOT:-/srv/http/sveltemark}
         image:
           subpath: usr/share/nginx/html/

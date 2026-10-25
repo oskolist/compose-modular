@@ -3,7 +3,7 @@ services:
   nginx:
     volumes:
       - type: image
-        source: ${GHCR_MIRROR:-ghcr.io/oskolist}/vscode-web-standalone:latest
+        source: ${VSCODEWEBSTANDALONE_IMAGE_SRC:-ghcr.io/oskolist/vscode-web-standalone}:${VSCODEWEBSTANDALONE_IMAGE_TAG:-latest}${VSCODEWEBSTANDALONE_IMAGE_DIGEST:-}
         target: ${VSCODEWEBSTANDALONE_ROOT:-/srv/http/vscode-web-standalone}
         image:
           subpath: app/

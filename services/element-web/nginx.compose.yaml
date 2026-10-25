@@ -3,7 +3,7 @@ services:
   nginx:
     volumes:
       - type: image
-        source: vectorim/element-web:latest
+        source: ${ELEMENTWEB_IMAGE_SRC:-vectorim/element-web}:${ELEMENTWEB_IMAGE_TAG:-latest}${ELEMENTWEB_IMAGE_DIGEST:-}
         target: ${ELEMENTWEB_ROOT:-/srv/http/element-web}
         image:
           subpath: app/

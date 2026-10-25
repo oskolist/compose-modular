@@ -1,6 +1,6 @@
 services:
   zooid:
-    image: ${ZOOID_IMAGE_SRC:-ghcr.io/coracle-social/zooid}:${ZOOID_IMAGE_TAG:-latest}${ZOOID_IMAGE_DIGEST:-} # Alpine-based
+    image: ${ZOOID_IMAGE_SRC:-gitea.coracle.social/coracle/zooid}:${ZOOID_IMAGE_TAG:-latest}${ZOOID_IMAGE_DIGEST:-} # Alpine-based
     restart: unless-stopped
     volumes:
       - ../../data/zooid:/app:rw
@@ -11,12 +11,12 @@ services:
         bind:
           create_host_path: false
       - type: image
-        source: ${GHCR_MIRROR:-ghcr.io/yasn77}/envsubst-image:1.4.2
+        source: ${ENVSUBST_IMAGE_SRC:-ghcr.io/yasn77/envsubst-image}:${ENVSUBST_IMAGE_TAG:-1.4.2}${ENVSUBST_IMAGE_DIGEST:-}
         target: /usr/local/bin/go-envsubst
         image:
           subpath: usr/bin/envsubst
       - type: image
-        source: library/busybox:stable-musl
+        source: ${BUSYBOX_IMAGE_SRC:-library/busybox}:${BUSYBOX_IMAGE_TAG:-stable-musl}${BUSYBOX_IMAGE_DIGEST:-}
         target: /usr/local/bin/busybox
         image:
           subpath: bin/busybox

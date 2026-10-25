@@ -23,7 +23,7 @@ services:
         bind:
           create_host_path: false
       - type: image
-        source: ${GHCR_MIRROR:-ghcr.io/jqlang}/jq:latest
+        source: ${JQ_IMAGE_SRC:-ghcr.io/jqlang/jq}:${JQ_IMAGE_TAG:-latest}${JQ_IMAGE_DIGEST:-}
         target: /usr/local/bin/jq
         image:
           subpath: jq

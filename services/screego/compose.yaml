@@ -6,7 +6,7 @@ services:
     image: ${SCREEGO_IMAGE_SRC:-ghcr.io/screego/server}:${SCREEGO_IMAGE_TAG:-unstable}${SCREEGO_IMAGE_DIGEST:-}
     volumes:
       - type: image
-        source: library/busybox:stable-musl
+        source: ${BUSYBOX_IMAGE_SRC:-library/busybox}:${BUSYBOX_IMAGE_TAG:-stable-musl}${BUSYBOX_IMAGE_DIGEST:-}
         target: /bin/busybox
         image:
           subpath: bin/busybox
