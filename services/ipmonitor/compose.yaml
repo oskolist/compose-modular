@@ -1,6 +1,6 @@
 services:
   ipmonitor:
-    image: ${APINE_IMAGE_SRC:-alpine}:${APINE_IMAGE_TAG:-latest}${APINE_IMAGE_DIGEST:-}
+    image: ${ALPINE_IMAGE_SRC:-alpine}:${ALPINE_IMAGE_TAG:-latest}${ALPINE_IMAGE_DIGEST:-}
     restart: unless-stopped # TODO: maybe use "always"?
     volumes:
       - type: bind
