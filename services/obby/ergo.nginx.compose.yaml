@@ -1,24 +1,21 @@
-# override nginx container with extra conf and html root
 services:
   nginx:
     volumes:
       - type: bind
-        source: ../ergo/nginx.obby.location.conf
+        source: ../obby/nginx.location.conf
         target: /etc/nginx/conf.d/obby.d/location.d/ergo.conf.template
         read_only: true
         bind:
           create_host_path: false
       - type: bind
-        source: ../ergo/nginx.obby.server.json
+        source: ../obby/ergo.server.json
         target: /etc/obby/servers.d/ergo.json.template
         read_only: true
         bind:
           create_host_path: false
-    #env_file:
-    #  - path: ../ergo/nginx.env
-    #    required: true
     environment:
       - ERGO_NETWORK_NAME
       - ERGO_DESCRIPTION
       - ERGO_DOMAIN
       - ERGO_WS_PORT
+      - ERGO_WSS_PORT=${ERGO_WSS_PORT:-${HTTPS_PORT:-443}}

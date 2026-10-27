@@ -65,9 +65,9 @@ include:
     # IRC
     ## Client
     #- services/obby/nginx.compose.yaml # Static webapp
+    #- services/obby/ergo.nginx.compose.yaml
     ## Server
     #- services/ergo/compose.yaml
-    #- services/ergo/nginx.compose.yaml
     # IPFS
     ## Kubo
     #- services/kubo/compose.yaml
