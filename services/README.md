@@ -1,5 +1,4 @@
 # TODO
-- add postgres serivce with multiple database support
 - add ntfy service
 - add penpot service
 - - check how to use coturn for screego instead of screego internal turn server

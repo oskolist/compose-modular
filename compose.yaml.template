@@ -15,6 +15,9 @@ include:
     #- services/coturn/ipmonitor.compose.yaml
     ## Turn-rs
     #- services/turn-rs/compose.yaml
+    ## Database
+    ### Postgres
+    #- services/postgres/compose.yaml
     ## Authentication
     ### OIDC
     #### Nostr-OIDC

@@ -1,0 +1,45 @@
+# Shared PostgreSQL instance that can be used by several consumer services at
+# once. Each consumer gets its own database (and role) by dropping a declaration
+# file into the mounted "data/postgres/db.d" volume — see databases.sh + README.md.
+# https://github.com/docker-library/postgres/blob/master/docker-entrypoint.sh
+# https://github.com/docker-library/docs/tree/master/postgres
+# https://github.com/docker-library/postgres/pull/496   (source & reuse the entrypoint)
+# https://github.com/docker-library/postgres/issues/151 (multiple databases)
+services:
+  postgres:
+    image: ${POSTGRES_IMAGE_SRC:-postgres}:${POSTGRES_IMAGE_TAG:-18}${POSTGRES_IMAGE_DIGEST:-}
+    restart: unless-stopped
+    shm_size: 128mb
+    volumes:
+      # PGDATA = /var/lib/postgresql/data  (persisted on the host under data/postgres/)
+      - ../../data/postgres:/var/lib/postgresql
+      # per-consumer database declarations (e.g. "forgejo.env") -> /db.d
+      # create_host_path: true lets the volume exist (empty) on first start;
+      # databases.sh treats an empty /db.d as "no consumers yet".
+      - type: bind
+        source: ../../data/postgres/db.d
+        target: /db.d
+        read_only: true
+        bind:
+          create_host_path: true
+      # custom "always-init" entrypoint that re-runs /docker-entrypoint-initdb.d/* on every start
+      - type: bind
+        source: ../postgres/entrypoint.sh
+        target: /custom-entrypoint.sh
+        read_only: true
+        bind:
+          create_host_path: false
+      # idempotent per-consumer database provisioning, (re)run on every start
+      - type: bind
+        source: ../postgres/databases.sh
+        target: /docker-entrypoint-initdb.d/00-databases.sh
+        read_only: true
+        bind:
+          create_host_path: false
+    env_file:
+      - path: ../postgres/.env
+        required: true
+    # Override the image's default entrypoint with our wrapper. The image default
+    # CMD ("postgres") is kept, so the server is started normally after our logic.
+    entrypoint: ["/custom-entrypoint.sh"]
+    command: ["postgres"]
