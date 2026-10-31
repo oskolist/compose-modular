@@ -1,0 +1,11 @@
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../syncstorage-rs/nginx.http.domain.conf
+        target: /etc/nginx/conf.d/domains/${SYNCSTORAGERS_DOMAIN}/syncstorage.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+    environment:
+      - SYNCSTORAGERS_PORT=${SYNCSTORAGERS_PORT:-8011}

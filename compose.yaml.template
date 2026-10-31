@@ -23,6 +23,10 @@ include:
     #### Nostr-OIDC
     #- services/nostr-oidc/compose.yaml
     #- services/nostr-oidc/nginx.compose.yaml
+    ## Sync
+    ### syncstorage-rs (Firefox Sync)
+    #- services/syncstorage-rs/compose.yaml
+    #- services/syncstorage-rs/nginx.compose.yaml
     # Filesharing
     ## Uploadfile
     #- services/dufs/compose.yaml

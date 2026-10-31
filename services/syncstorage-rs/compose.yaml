@@ -1,0 +1,48 @@
+# Firefox Sync Storage server — the "syncstorage-rs" Rust implementation, self-hosted
+# mode where syncstorage + tokenserver run together on one image. Schema migrations
+# (syncstorage schema applied automatically; tokenserver schema via RUN_MIGRATIONS)
+# and the /1.0/sync/1.5 node bootstrap run at startup against the shared postgres.
+# https://github.com/mozilla-services/syncstorage-rs
+services:
+  syncstorage-rs:
+    image: ${SYNCSTORAGERS_IMAGE_SRC:-ghcr.io/mozilla-services/syncstorage-rs/syncserver-postgres}:${SYNCSTORAGERS_IMAGE_TAG:-0.24.0}${SYNCSTORAGERS_IMAGE_DIGEST:-}
+    restart: unless-stopped
+    # Database is shared: the per-consumer declaration lives at
+    # data/postgres/db.d/syncstorage.env (see README.md).
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${SYNCSTORAGERS_BIND:-127.0.0.1}:${SYNCSTORAGERS_PORT:-8011}:${SYNCSTORAGERS_PORT:-8011}"
+    env_file:
+      - path: ../../.env.base
+        required: true
+      - path: ../syncstorage-rs/.env
+        required: true
+    environment:
+      # Listener bind + port (0.0.0.0 so the container is reachable from nginx).
+      - SYNC_HOST=0.0.0.0
+      - SYNC_PORT=${SYNCSTORAGERS_PORT:-8011}
+      # Hawk master secret used to derive signing/token secrets (required).
+      - SYNC_MASTER_SECRET=${SYNCSTORAGERS_MASTER_SECRET?SYNCSTORAGERS_MASTER_SECRET must be set in services/syncstorage-rs/.env}
+      # Human-readable logs + log level.
+      - SYNC_HUMAN_LOGS=${SYNCSTORAGERS_HUMAN_LOGS:-1}
+      - RUST_LOG=${SYNCSTORAGERS_LOGLEVEL:-info}
+      # Shared PostgreSQL backing store (provisioned by the postgres service).
+      # The password must be URL-safe (no @/: ? etc.) — base32/hex recommended.
+      - SYNC_SYNCSTORAGE__DATABASE_URL=postgresql://sync:${SYNCSTORAGERS_DB_PASSWORD?SYNCSTORAGERS_DB_PASSWORD must be set}@postgres:5432/syncserver
+      - SYNC_TOKENSERVER__DATABASE_URL=postgresql://sync:${SYNCSTORAGERS_DB_PASSWORD?SYNCSTORAGERS_DB_PASSWORD must be set}@postgres:5432/syncserver
+      # Enable + drive the Tokenserver side (Firefox Accounts bootstrap).
+      - SYNC_TOKENSERVER__ENABLED=true
+      - SYNC_TOKENSERVER__RUN_MIGRATIONS=true
+      - SYNC_TOKENSERVER__NODE_TYPE=postgres
+      - SYNC_TOKENSERVER__INIT_NODE_URL=https://${SYNCSTORAGERS_DOMAIN?SYNCSTORAGERS_DOMAIN must be set}
+      - SYNC_TOKENSERVER__FXA_EMAIL_DOMAIN=${SYNCSTORAGERS_FXA_EMAIL_DOMAIN:-api.accounts.firefox.com}
+      - SYNC_TOKENSERVER__FXA_OAUTH_SERVER_URL=${SYNCSTORAGERS_FXA_OAUTH_SERVER_URL:-https://oauth.accounts.firefox.com}
+      - SYNC_TOKENSERVER__FXA_METRICS_HASH_SECRET=${SYNCSTORAGERS_METRICS_HASH_SECRET?SYNCSTORAGERS_METRICS_HASH_SECRET must be set}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:${SYNCSTORAGERS_PORT:-8011}/__heartbeat__"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
