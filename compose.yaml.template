@@ -73,8 +73,10 @@ include:
     ## Client
     #- services/obby/nginx.compose.yaml # Static webapp
     #- services/obby/ergo.nginx.compose.yaml
+    #- services/obby/obbyircd.nginx.compose.yaml
     ## Server
     #- services/ergo/compose.yaml
+    #- services/obbyircd/compose.yaml
     # IPFS
     ## Kubo
     #- services/kubo/compose.yaml

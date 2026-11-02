@@ -1,0 +1,79 @@
+# https://github.com/obbyworld/ObbyIRCd
+# https://github.com/obbyworld/ObbyIRCd/blob/unreal60_dev/.env.example
+# https://github.com/obbyworld/ObbyIRCd/blob/unreal60_dev/docker/README.md
+# https://github.com/obbyworld/ObbyIRCd/blob/unreal60_dev/docker/Dockerfile
+# https://github.com/obbyworld/ObbyIRCd/blob/unreal60_dev/docker/docker-entrypoint.sh
+#
+# ObbyIRCd ships its own Docker image whose ENTRYPOINT already renders `obbyircd.conf` from a baked-in template via envsubst, generates random cloak keys / a random oper password when none are supplied, issues a self-signed TLS cert if none is found, validates the config and starts the IRCd in the foreground.  This service reuses that entrypoint unchanged — the only addition is injecting the shared LetsEncrypt certificate (provided through the `ssl_certificate` / `ssl_certificate_key` secrets, see prepare_env.sh) into the TLS directory so native `ircs://` on port 6697 is served with a trusted cert instead of a throwaway self-signed one.  This mirrors how the `ergo` service is wired in this repo.
+# Configuration is driven entirely by environment variables (see .env.template), which map to the unprefixed names the obbyircd image expects (SERVER_NAME, NETWORK_NAME, OPER_NAME, ...).  The image renders obbyircd.conf from its baked-in template on first start; to apply .env changes to an already-running instance, delete the first-run marker and restart so the conf is re-rendered:
+#   rm -f data/obbyircd/conf/.docker_initialized && docker compose up -d obbyircd
+services:
+  obbyircd:
+    init: true
+    image: ${OBBYIRCD_IMAGE_SRC:-obbyworld/obbyircd}:${OBBYIRCD_IMAGE_TAG:-6.2.8.3}${OBBYIRCD_IMAGE_DIGEST:-}
+    ports:
+      - "${OBBYIRCD_SSL_BIND:-0.0.0.0}:${OBBYIRCD_SSL_PORT:-6697}:${OBBYIRCD_SSL_PORT:-6697}/tcp"
+      # Plain-text WebSocket is bound to loopback only; front it with the shared Nginx behind "wss://" if you want the Obby web client to reach this server.
+      - "${OBBYIRCD_WS_BIND:-127.0.0.1}:${OBBYIRCD_WS_PORT:-8080}:${OBBYIRCD_WS_PORT:-8080}/tcp"
+    secrets:
+      - source: ssl_certificate
+        target: fullchain.pem
+        uid: "101"
+        gid: "101"
+        mode: 0o444
+      - source: ssl_certificate_key
+        target: privkey.pem
+        uid: "101"
+        gid: "101"
+        mode: 0o440
+    volumes:
+      # ObbyIRCd ships its own go-envsubst, so unlike `ergo` no extra envsubst-image volume is mounted here.
+      - ../../data/obbyircd:/home/obbyircd/obby:rw
+      - type: bind
+        source: ../obbyircd/entrypoint.sh
+        target: /usr/local/bin/obbyircd-entrypoint.sh
+        read_only: true
+        bind:
+          create_host_path: false
+    # The obbyircd image reads unprefixed env vars (SERVER_NAME, NETWORK_NAME, OPER_NAME, ...).  We keep the repository-style OBBYIRCD_* names in .env and only translate them here, so there is no naming clash with other services.
+    environment:
+      SERVER_NAME: "${OBBYIRCD_SERVER_NAME:-irc.${MAIN_DOMAIN}}"
+      NETWORK_NAME: "${OBBYIRCD_NETWORK_NAME:-${MAIN_DOMAIN}}"
+      ADMIN_EMAIL: "${OBBYIRCD_ADMIN_EMAIL:-admin@${MAIN_DOMAIN}}"
+      SSL_PORT: "${OBBYIRCD_SSL_PORT:-6697}"
+      WS_PORT: "${OBBYIRCD_WS_PORT:-8080}"
+      RPC_PORT: "${OBBYIRCD_RPC_PORT:-8600}"
+      RPC_PASSWORD: "${OBBYIRCD_RPC_PASSWORD:-}"
+      OPER_NAME: "${OBBYIRCD_OPER_NAME:-admin}"
+      OPER_PASSWORD: "${OBBYIRCD_OPER_PASSWORD:-}"
+      OPER_MASK: "${OBBYIRCD_OPER_MASK:-*}"
+      FILEHOST_URL: "${OBBYIRCD_FILEHOST_URL:-}"
+      CLOAK_KEY1: "${OBBYIRCD_CLOAK_KEY1:-}"
+      CLOAK_KEY2: "${OBBYIRCD_CLOAK_KEY2:-}"
+      CLOAK_KEY3: "${OBBYIRCD_CLOAK_KEY3:-}"
+      VOICE_TURN_EXTERNAL_URLS: "${OBBYIRCD_VOICE_TURN_EXTERNAL_URLS:-}"
+      VOICE_TURN_SHARED_SECRET: "${OBBYIRCD_VOICE_TURN_SHARED_SECRET:-}"
+      VOICE_TURN_TTL: "${OBBYIRCD_VOICE_TURN_TTL:-21600}"
+      INVITE_BASE_URL: "${OBBYIRCD_INVITE_BASE_URL:-}"
+      INVITE_PAGE_PORT: "${OBBYIRCD_INVITE_PAGE_PORT:-}"
+      INVITE_IRC_HOST: "${OBBYIRCD_INVITE_IRC_HOST:-}"
+      INVITE_IRC_PORT: "${OBBYIRCD_INVITE_IRC_PORT:-}"
+      INVITE_WEB_URL: "${OBBYIRCD_INVITE_WEB_URL:-}"
+      WEBPUSH_BACKEND_URL: "${OBBYIRCD_WEBPUSH_BACKEND_URL:-}"
+      WEBPUSH_BACKEND_KEY: "${OBBYIRCD_WEBPUSH_BACKEND_KEY:-}"
+    # Override the image's ENTRYPOINT only to inject the shared TLS certificate (see ../obbyircd/entrypoint.sh), then delegate to the upstream entrypoint (docker-entrypoint.sh) which renders/validates/starts the IRCd.  The image CMD (./bin/obbyircd -F) is passed through as "$@".
+    entrypoint:
+      - /bin/sh
+      - /usr/local/bin/obbyircd-entrypoint.sh
+    deploy:
+      placement:
+        constraints:
+          - "node.role == manager"
+      restart_policy:
+        condition: on-failure
+      replicas: 1
+secrets:
+  ssl_certificate:
+    environment: SSL_CERT
+  ssl_certificate_key:
+    environment: SSL_CERT_KEY

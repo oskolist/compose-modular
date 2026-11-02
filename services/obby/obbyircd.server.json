@@ -1,0 +1,6 @@
+{
+  "name": "${OBBYIRCD_NETWORK_NAME}",
+  "description": "${OBBYIRCD_DESCRIPTION}",
+  "wss": "wss://${OBBYIRCD_DOMAIN}:${OBBYIRCD_WSS_PORT}",
+  "obsidian": true
+}

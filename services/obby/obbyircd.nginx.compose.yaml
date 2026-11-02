@@ -1,0 +1,23 @@
+# https://github.com/obbyworld/ObbyIRCd
+# Enables ObbyIRCd in the Obby web frontend (mirrors services/obby/ergo.nginx.compose.yaml).
+services:
+  nginx:
+    volumes:
+      - type: bind
+        source: ../obby/obbyircd.nginx.location.conf
+        target: /etc/nginx/conf.d/obby.d/location.d/obbyircd.conf.template
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../obby/obbyircd.server.json
+        target: /etc/obby/servers.d/obbyircd.json.template
+        read_only: true
+        bind:
+          create_host_path: false
+    environment:
+      - OBBYIRCD_NETWORK_NAME
+      - OBBYIRCD_DESCRIPTION
+      - OBBYIRCD_DOMAIN
+      - OBBYIRCD_WS_PORT
+      - OBBYIRCD_WSS_PORT=${OBBYIRCD_WSS_PORT:-${HTTPS_PORT:-443}}
