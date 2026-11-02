@@ -27,7 +27,7 @@ services:
           subpath: usr/bin/envsubst
       # For Debugging:
       #- type: image
-      #  source: library/busybox:stable-musl
+      #  source: library/busybox:musl
       #  target: /usr/local/bin/busybox
       #  image:
       #    subpath: bin/busybox

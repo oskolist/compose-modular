@@ -16,7 +16,7 @@ services:
         image:
           subpath: usr/bin/envsubst
       - type: image
-        source: ${BUSYBOX_IMAGE_SRC:-library/busybox}:${BUSYBOX_IMAGE_TAG:-stable-musl}${BUSYBOX_IMAGE_DIGEST:-}
+        source: ${BUSYBOX_IMAGE_SRC:-library/busybox}:${BUSYBOX_IMAGE_TAG:-musl}${BUSYBOX_IMAGE_DIGEST:-}
         target: /usr/local/bin/busybox
         image:
           subpath: bin/busybox
